@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".Acivtiy.GetStartedPage">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:background="@drawable/started_img"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="@dimen/_30sdp"
+            android:layout_alignParentBottom="true">
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:text="PICK YOUR FAVORITE\n FRAMES"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:textSize="@dimen/_35sdp" />
+
+            <Button
+                android:id="@+id/startbtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="@dimen/_150sdp"
+                android:textColor="@color/white"
+                android:text="Get Started"
+                android:textSize="@dimen/_15sdp"
+                android:backgroundTint="@color/secondcolor"
+                android:layout_gravity="center"/>
+
+
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+
+
+
+
+</layout>

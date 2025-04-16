@@ -1,0 +1,25 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.VideoPlayer" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+         <item name="colorPrimary">@color/primarycolor</item>
+    </style>
+
+    <style name="Theme.VideoPlayer" parent="Base.Theme.VideoPlayer" />
+
+    <!-- Custom Button Style -->
+    <style name="CustomDialogButton" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/primarycolor</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
+
+    <style name="CustomDatePickerDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:headerBackground">@color/primarycolor</item>
+        <item name="android:calendarTextColor">@color/secondcolor</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/CustomDialogButton</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/CustomDialogButton</item>
+        <item name="android:datePickerMode">spinner</item>
+    </style>
+
+</resources>
