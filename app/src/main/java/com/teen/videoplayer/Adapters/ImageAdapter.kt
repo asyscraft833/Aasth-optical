@@ -52,11 +52,10 @@ class ImageAdapter(
 
         holder.binding.apply {
 
-
             imageview.setOnClickListener {
-                val imageList = items.map { it.file ?: "" } // ensures no nulls
+
                 fullImageview(
-                    imageList = imageList,
+                    imageList = items,
                     date = item.date,
                     startPosition = position
                 )
@@ -83,13 +82,13 @@ class ImageAdapter(
 
     fun convertDateFormat(inputDate: String): String {
         val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val outputFormat = SimpleDateFormat("MM dd yyyy", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
 
         val date = inputFormat.parse(inputDate)
         return outputFormat.format(date!!)
     }
 
-    fun fullImageview(imageList: List<String>, date: String, startPosition: Int = 0) {
+    fun fullImageview(imageList: List<data>, date: String, startPosition: Int = 0) {
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_full_image, null)
         val viewPager = dialogView.findViewById<ViewPager2>(R.id.imageViewPager)
         val imagedate = dialogView.findViewById<TextView>(R.id.imageuploaddate)
@@ -103,7 +102,7 @@ class ImageAdapter(
         var isFullScreen = false
 
 
-        imagedate.text = convertDateFormat(date)
+//        imagedate.text = convertDateFormat(date)
 
         val adapter = FullImagePagerAdapter(context, imageList)
         viewPager.adapter = adapter
@@ -111,6 +110,7 @@ class ImageAdapter(
 
         val dialog = Dialog(context)
         dialog.setContentView(dialogView)
+
         dialog.window?.setLayout(
             TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 350f, context.resources.displayMetrics).toInt(),
             TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400f, context.resources.displayMetrics).toInt()

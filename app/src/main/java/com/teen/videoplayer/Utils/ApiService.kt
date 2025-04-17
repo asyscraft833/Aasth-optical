@@ -5,6 +5,7 @@ import com.teen.videoplayer.Model.DashBoardFilter
 import com.teen.videoplayer.Model.DashBoardUserDetailsResponse
 import com.teen.videoplayer.Model.DeleteUserResponse
 import com.teen.videoplayer.Model.LoginResponse
+import com.teen.videoplayer.Model.MonthlyReportResponse
 import com.teen.videoplayer.Model.RegisterResponse
 import com.teen.videoplayer.Model.UserImageResponse
 import okhttp3.MultipartBody
@@ -43,6 +44,12 @@ interface ApiService {
     suspend fun userDetails(
         @Header("authorization") token: String
     ): Response<DashBoardUserDetailsResponse>
+
+
+    @GET("monthly")
+    suspend fun MonthlyReport(
+        @Header("authorization") token: String
+    ): Response<MonthlyReportResponse>
 
 
     @Multipart

@@ -13,8 +13,8 @@
 
 
         <androidx.cardview.widget.CardView
-            android:layout_width="30dp"
             android:id="@+id/crossbutton"
+            android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginEnd="@dimen/_10sdp"
@@ -39,8 +39,8 @@
             android:id="@+id/maxlayout"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            app:cardBackgroundColor="@color/white"
             android:layout_marginEnd="@dimen/_5sdp"
+            app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="@dimen/_30sdp"
             app:layout_constraintBottom_toBottomOf="@+id/crossbutton"
             app:layout_constraintEnd_toStartOf="@+id/crossbutton"
@@ -60,8 +60,7 @@
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/imageViewPager"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -75,19 +74,13 @@
             android:contentDescription="Full Image"
             android:scaleType="fitXY"
             android:src="@drawable/image"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/imageuploaddate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/_8sdp"
-            android:layout_marginBottom="@dimen/_8sdp"
-            android:text="12-11-2001 Monday"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_11ssp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

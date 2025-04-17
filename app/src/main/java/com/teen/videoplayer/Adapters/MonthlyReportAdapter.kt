@@ -17,18 +17,19 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.teen.videoplayer.Model.UserDetails
+import com.teen.videoplayer.Model.Usermonthly
 import com.teen.videoplayer.Model.data
 import com.teen.videoplayer.R
 import com.teen.videoplayer.databinding.DashbardRowLayoutBinding
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class dashboardAdapter(
+class MonthlyReportAdapter(
     private val context: Context,
-    private var items: List<UserDetails>,
+    private var items: List<Usermonthly>,
     private val onItemClick: (Int,Int) -> Unit
 
-) : RecyclerView.Adapter<dashboardAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<MonthlyReportAdapter.ViewHolder>() {
 
     // ViewHolder with ViewBinding
     class ViewHolder(val binding: DashbardRowLayoutBinding) : RecyclerView.ViewHolder(binding.root)
@@ -72,6 +73,8 @@ class dashboardAdapter(
 
 
             imagefile.setOnClickListener {
+                val imageList = items.map { it.file ?: "" }
+
 
                 val dataList = items.mapNotNull {
                     val date = item.created_at
@@ -82,7 +85,6 @@ class dashboardAdapter(
 
                 fullImageview(
                     imageList = dataList,
-                    date = item.created_at,
                     startPosition = position
                 )
             }
@@ -98,26 +100,17 @@ class dashboardAdapter(
         }
     }
 
-    fun updateList(newlist : List<UserDetails>){
+    fun updateList(newlist : List<Usermonthly>){
         items = newlist
         notifyDataSetChanged()
     }
 
 
 
-    fun convertDateFormat(inputDate: String): String {
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val outputFormat = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
+    fun fullImageview(imageList: List<data>,  startPosition: Int = 0) {
 
-        val date = inputFormat.parse(inputDate)
-        return outputFormat.format(date!!)
-    }
-
-
-    fun fullImageview(imageList: List<data>, date: String, startPosition: Int = 0) {
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_full_image, null)
         val viewPager = dialogView.findViewById<ViewPager2>(R.id.imageViewPager)
-
         val crossbutton = dialogView.findViewById<CardView>(R.id.crossbutton)
         val maxlayout = dialogView.findViewById<CardView>(R.id.maxlayout)
         val imgToggleSize = dialogView.findViewById<ImageView>(R.id.imgToggleSize)

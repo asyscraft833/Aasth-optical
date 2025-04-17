@@ -11,8 +11,11 @@ import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,8 +26,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.teen.videoplayer.Adapters.CustomerAutoCompleteAdapter
+import com.teen.videoplayer.Adapters.CustomerAutoCompleteNumberAdapter
 import com.teen.videoplayer.Adapters.ImageAdapter
+import com.teen.videoplayer.Adapters.dashboardAdapter
 import com.teen.videoplayer.BaseActivity
+import com.teen.videoplayer.Model.UserDetails
+import com.teen.videoplayer.Model.data
 import com.teen.videoplayer.R
 import com.teen.videoplayer.Utils.CameraUtils
 import com.teen.videoplayer.Utils.CameraUtils.openCamera
@@ -32,17 +40,21 @@ import com.teen.videoplayer.Utils.CameraUtils.openGallery
 import com.teen.videoplayer.Utils.NetworkUtils
 import com.teen.videoplayer.Utils.PermissionUtils
 import com.teen.videoplayer.ViewModels.AddUserViewmodel
+import com.teen.videoplayer.ViewModels.DashBoardViewmodel
 import com.teen.videoplayer.databinding.ActivityAddUserBinding
 import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.net.URL
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 @AndroidEntryPoint
 class AddUserActivity : BaseActivity() {
 
     private val viewmodel: AddUserViewmodel by viewModels()
+    private val viewmodeldashboard: DashBoardViewmodel by viewModels()
     private lateinit var binding: ActivityAddUserBinding
     private var userid = ""
     private var flag  = 0
@@ -56,6 +68,14 @@ class AddUserActivity : BaseActivity() {
 
     private var imageFile: File? = null
     private var imageurl: String? = null
+
+    private lateinit var autoCompleteAdapter: CustomerAutoCompleteAdapter
+    private lateinit var autoCompleteAdapternumber: CustomerAutoCompleteNumberAdapter
+    private var activeField: String = ""
+
+    val imagedatalist = mutableListOf<data>()
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,9 +118,114 @@ class AddUserActivity : BaseActivity() {
         }
 
 
+        autoCompleteAdapter = CustomerAutoCompleteAdapter(this, mutableListOf())
+        binding.etname.setAdapter(autoCompleteAdapter)
+        binding.etname.threshold = 1
+
+        autoCompleteAdapternumber = CustomerAutoCompleteNumberAdapter(this, mutableListOf())
+        binding.etmobile.setAdapter(autoCompleteAdapternumber)
+        binding.etmobile.threshold = 1
+
+
+
+
+        binding.etname.setOnItemClickListener { _, _, position, _ ->
+
+            val selectedCustomer = autoCompleteAdapter.getItem(position)
+
+            binding.etname.setText(selectedCustomer?.name ?: "")
+            binding.etmobile.setText(selectedCustomer?.phone ?: "")
+            selectedCustomer?.created_at?.let { setdatefromate(it) }
+
+            userid = selectedCustomer?.id.toString()
+            flag = 1
+
+            imagedatalist.clear()
+
+            // Get new image list if available
+            val datalist = selectedCustomer?.file?.let {
+                data(selectedCustomer.created_at, it) // Ensure this function returns a list
+            }
+
+            datalist?.let {
+                imagedatalist.addAll(listOf(it))
+                adapter.updateList(imagedatalist)
+            } ?: run {
+                adapter.updateList(emptyList())
+            }
+
+
+
+        }
+
+
+        binding.etmobile.setOnItemClickListener { _, _, position, _ ->
+
+            val selectedCustomer = autoCompleteAdapternumber.getItem(position)
+            binding.etname.setText(selectedCustomer?.name ?: "")
+            binding.etmobile.setText(selectedCustomer?.phone ?: "")
+            selectedCustomer?.created_at?.let { setdatefromate(it) }
+
+            userid = selectedCustomer?.id.toString()
+            flag = 1
+            imagedatalist.clear()
+
+
+            // Get new image list if available
+            val datalist = selectedCustomer?.file?.let {
+                data(selectedCustomer.created_at, it)
+            }
+
+            datalist?.let {
+                imagedatalist.addAll(listOf(it))
+                adapter.updateList(imagedatalist)
+            } ?: run {
+                adapter.updateList(emptyList())
+            }
+
+        }
+
+
 
         binding.etDate.setOnClickListener { showDatePicker() }
         binding.backbtn.setOnClickListener { finish() }
+
+
+
+
+        binding.etname.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                flag = 0
+                activeField = "name"
+
+                val query = s.toString()
+                if (query.length >= 2) {
+                    UserdetailAPiFilter(query)
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        binding.etmobile.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                activeField = "mobile"
+
+                flag = 0
+
+                val query = s.toString()
+                if (query.length >= 2) {
+                    UserdetailAPiFilter(query)
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
 
 
 
@@ -109,28 +234,79 @@ class AddUserActivity : BaseActivity() {
         }
 
 
-
         binding.opengallery.setOnClickListener {
             checkpermission(false)
         }
 
+
+
         val layoutManager = GridLayoutManager(this,3,LinearLayoutManager.VERTICAL,false)
         binding.imageRecyclerview.layoutManager = layoutManager
 
+
+
+
        adapter = ImageAdapter(this,emptyList(), onItemClick = { position, flag ->
 
-
-
         })
-
 
         binding.imageRecyclerview.adapter = adapter
 
 
         observeViewModel()
+        observer()
         RecieveCamera()
     }
 
+    private fun setdatefromate(date : String){
+
+        val finalDate = try {
+            val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val date = inputFormat.parse(date)
+            outputFormat.format(date!!)
+        } catch (e: Exception) {
+            ""
+        }
+
+        binding.etDate.setText(finalDate)
+    }
+
+
+
+    private fun observer() {
+
+        viewmodeldashboard.dashBoardResponseFilter.observe(this) { response ->
+            response?.let {
+                if (activeField == "name") {
+                    autoCompleteAdapter.updateData(response.users.toMutableList())
+                } else if (activeField == "mobile") {
+                    autoCompleteAdapternumber.updateData(response.users.toMutableList())
+                }
+            }
+        }
+
+
+
+
+        viewmodel.errorlogin.observe(this) { errorMessage ->
+            Log.e("API", errorMessage.message.toString())
+        }
+
+
+    }
+
+
+    fun UserdetailAPiFilter(query: String){
+        if (NetworkUtils.isInternetAvailable(this)){
+            val token = "Bearer "+userPref.getToken().toString()
+            viewmodeldashboard.hitDashBoardFilter(token,query)
+
+        }else{
+            toast(this,"Please check your Internet Connection")
+        }
+
+    }
 
     private fun RecieveCamera() {
         // Camera result launcher
@@ -309,6 +485,9 @@ class AddUserActivity : BaseActivity() {
             Log.d("updatedata", "Mobile : ${binding.etmobile.text}")
             Log.d("updatedata", "File : $fileToUpload")
 
+
+
+
             viewmodel.hitUpdateUser(
                 token,
                 userid,
@@ -392,3 +571,4 @@ class AddUserActivity : BaseActivity() {
     }
 
 }
+

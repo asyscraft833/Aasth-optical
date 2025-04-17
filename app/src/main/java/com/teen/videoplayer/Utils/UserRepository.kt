@@ -77,6 +77,11 @@ class UserRepository @Inject constructor(private val apiService: ApiService) {
     ) = apiService.userDetails(token)
 
 
+ suspend fun MonthlyReport(
+        token: String,
+    ) = apiService.MonthlyReport(token)
+
+
   suspend fun userDetailsFilter(
         token: String,
         query:  String,

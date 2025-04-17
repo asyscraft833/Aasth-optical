@@ -166,55 +166,71 @@
                         android:orientation="vertical">
 
 
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:hint="name"
+                            android:text="Name"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_14ssp" />
+
+
+                        <AutoCompleteTextView
+                            android:id="@+id/etname"
+                            android:layout_width="match_parent"
+                            android:background="@drawable/edit_bground"
+                            android:drawableStart="@drawable/user_ic"
+                            android:padding="@dimen/_10sdp"
+                            android:singleLine="true"
+                            android:layout_marginTop="@dimen/_2sdp"
+                            android:drawablePadding="5dp"
+                            android:hint="Enter customer name"
                             android:textColorHint="@color/hintcolor"
-                            app:boxStrokeColor="@color/greycolor">
-
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/etname"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:drawableStart="@drawable/user_ic"
-                                android:drawablePadding="@dimen/_5sdp"
-                                android:inputType="text"
-                                android:padding="@dimen/_10sdp"
-                                android:textColor="@color/textcolor"
-                                android:textSize="16sp" />
-                        </com.google.android.material.textfield.TextInputLayout>
-
-
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            />
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Mobile"
                             android:layout_marginTop="@dimen/_10sdp"
-                            android:hint="Mobile"
-                            android:textColorHint="@color/hintcolor"
-                            app:boxStrokeColor="@color/greycolor"
-                            app:prefixText="+91"
-                            app:prefixTextColor="@color/black">
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_14ssp" />
 
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/etmobile"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:drawableStart="@drawable/call_24px"
-                                android:drawablePadding="@dimen/_5sdp"
-                                android:inputType="number"
-                                android:maxLength="10"
-                                android:padding="@dimen/_10sdp"
-                                android:textColor="@color/textcolor"
-                                android:textSize="16sp" />
-                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <AutoCompleteTextView
+                            android:id="@+id/etmobile"
+                            android:layout_width="match_parent"
+                            android:background="@drawable/edit_bground"
+                            android:drawableStart="@drawable/call_24px"
+                            android:padding="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_2sdp"
+                            android:maxLength="10"
+                            android:singleLine="true"
+                            android:drawablePadding="5dp"
+                            android:inputType="number"
+                            android:hint="Enter customer mobile"
+                            android:textColorHint="@color/hintcolor"
+                            android:layout_height="wrap_content"
+                            />
+
+
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Select date"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/_14ssp" />
 
 
                         <TextView
                             android:id="@+id/etDate"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_2sdp"
                             android:background="@drawable/textviewbg"
                             android:drawableStart="@drawable/baseline_calendar_month_24"
                             android:drawablePadding="@dimen/_5sdp"
@@ -229,7 +245,7 @@
                             android:id="@+id/uploadimagelayouttext"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/_10sdp"
+                            android:layout_marginTop="@dimen/_16sdp"
                             android:text="Add More Image"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_15ssp" />
@@ -304,6 +320,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_10sdp"
                             android:text="Add Image"
+                            android:visibility="gone"
                             android:textColor="@color/black"
                             android:textSize="@dimen/_15ssp" />
 

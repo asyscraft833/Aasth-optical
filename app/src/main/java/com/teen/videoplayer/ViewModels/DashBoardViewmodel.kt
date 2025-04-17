@@ -7,6 +7,7 @@ import com.teen.videoplayer.Model.DashBoardFilter
 import com.teen.videoplayer.Model.DashBoardUserDetailsResponse
 import com.teen.videoplayer.Model.DeleteUserResponse
 import com.teen.videoplayer.Model.LoginResponse
+import com.teen.videoplayer.Model.MonthlyReportResponse
 import com.teen.videoplayer.Model.RegisterResponse
 import com.teen.videoplayer.Utils.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,9 +27,35 @@ class DashBoardViewmodel @Inject constructor(
     var errorlogin = MutableLiveData<Throwable>()
     var progresslogin = MutableLiveData<Boolean>()
     val dashBoardResponse = MutableLiveData<DashBoardUserDetailsResponse>()
+    val monthlyReportreponse = MutableLiveData<MonthlyReportResponse>()
     val dashBoardResponseFilter = MutableLiveData<DashBoardFilter>()
     val deleteUserResponse = MutableLiveData<DeleteUserResponse>()
 
+
+    fun Hitmonthlydata(
+        token: String,
+    ) {
+        viewModelScope.launch {
+            try {
+                // Show progress
+                progresslogin.value = true
+                val response = repository.MonthlyReport(token)
+
+                if (response.isSuccessful) {
+
+                    monthlyReportreponse.postValue(response.body())
+
+                }
+
+            } catch (e: Exception) {
+                // Handle error and post it to LiveData
+                errorlogin.postValue(e)
+            } finally {
+                // Hide progress
+                progresslogin.value = false
+            }
+        }
+    }
 
     fun hitDashBoard(
         token: String,

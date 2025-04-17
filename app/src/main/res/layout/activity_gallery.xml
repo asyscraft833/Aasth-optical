@@ -22,25 +22,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Monthly Report"
+            android:text="My Gallery"
             android:textStyle="bold"
             android:textColor="@color/black"
             android:layout_gravity="center"
             android:textSize="@dimen/_16ssp"/>
 
-
-        <EditText
-            android:id="@+id/searchdata"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/textviewbg"
-            android:drawableStart="@drawable/search_24px"
-            android:layout_marginHorizontal="@dimen/_10sdp"
-            android:layout_marginTop="16dp"
-            android:drawablePadding="@dimen/_10sdp"
-            android:hint="Search by name/number"
-            android:padding="@dimen/_10sdp"
-            android:textColor="@color/black" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -55,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="8dp"
-                android:text="Total Customers :"
+                android:text="Total Image :"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -82,17 +69,16 @@
 
 
 
-        <!-- RecyclerView List -->
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_below="@id/tv_total_entries"
+            android:id="@+id/imageRecyclerview"
+            android:layout_marginTop="@dimen/_8sdp"
+            tools:listitem="@layout/image_row_item"
             android:layout_marginHorizontal="@dimen/_16sdp"
-            android:layout_marginBottom="@dimen/_5sdp"
-            tools:itemCount="8"
-            tools:listitem="@layout/dashbard__row_layout" />
+            app:spanCount="3"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            android:layout_height="wrap_content"/>
+
 
 
 

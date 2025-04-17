@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/_80sdp"
     android:layout_height="@dimen/_80sdp"
+    android:layout_marginVertical="@dimen/_5sdp"
+    android:layout_marginHorizontal="@dimen/_5sdp"
+    app:cardCornerRadius="8dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_margin="@dimen/_3sdp"
-        android:layout_height="match_parent"
-        app:cardCornerRadius="8dp">
 
         <ImageView
             android:id="@+id/imageview"
@@ -18,6 +15,5 @@
             android:src="@drawable/image" />
 
 
-    </androidx.cardview.widget.CardView>
 
-</LinearLayout>
+</androidx.cardview.widget.CardView>

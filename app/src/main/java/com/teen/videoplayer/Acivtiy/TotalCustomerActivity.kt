@@ -7,8 +7,12 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.teen.videoplayer.Adapters.MonthlyReportAdapter
@@ -19,22 +23,23 @@ import com.teen.videoplayer.Model.Usermonthly
 import com.teen.videoplayer.R
 import com.teen.videoplayer.Utils.NetworkUtils
 import com.teen.videoplayer.ViewModels.DashBoardViewmodel
-import com.teen.videoplayer.databinding.ActivityMonthlyReportBinding
+import com.teen.videoplayer.databinding.ActivityTotalCustomerBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MonthlyReportActivity : BaseActivity() {
-    lateinit var binding : ActivityMonthlyReportBinding
+class TotalCustomerActivity : BaseActivity() {
+    lateinit var binding : ActivityTotalCustomerBinding
 
     private val viewmodel: DashBoardViewmodel by viewModels()
-    lateinit var adapter: MonthlyReportAdapter
+    lateinit var adapter: dashboardAdapter
 
-    var datalist = mutableListOf<Usermonthly>()
+    var datalist = mutableListOf<UserDetails>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_monthly_report)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_monthly_report)
+        setContentView(R.layout.activity_total_customer)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_total_customer)
+
 
         binding.backbtn.setOnClickListener { finish() }
 
@@ -43,6 +48,7 @@ class MonthlyReportActivity : BaseActivity() {
         observer()
         SetupRecylerview()
         setupSearchFilter()
+
 
     }
 
@@ -67,11 +73,9 @@ class MonthlyReportActivity : BaseActivity() {
         })
     }
 
-
-
     private fun SetupRecylerview() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = MonthlyReportAdapter(this, emptyList(), onItemClick = { position, flag ->
+        adapter = dashboardAdapter(this, emptyList(), onItemClick = { position, flag ->
 
             if (flag == 1) {
                 val intent = Intent(this, AddUserActivity::class.java)
@@ -105,6 +109,7 @@ class MonthlyReportActivity : BaseActivity() {
         binding.recyclerView.adapter = adapter
     }
 
+
     fun dialogfun(userId: String) {
         AlertDialog.Builder(this)
             .setTitle("Delete")
@@ -121,6 +126,19 @@ class MonthlyReportActivity : BaseActivity() {
 
     }
 
+
+    fun UserdetailAPi() {
+        if (NetworkUtils.isInternetAvailable(this)) {
+            val token = "Bearer " + userPref.getToken().toString()
+            viewmodel.hitDashBoard(token)
+
+        } else {
+            toast(this, "Please check your Internet Connection")
+        }
+
+
+    }
+
     fun DeletuserEntry(userid: String) {
         if (NetworkUtils.isInternetAvailable(this)) {
             val token = "Bearer " + userPref.getToken().toString()
@@ -133,25 +151,12 @@ class MonthlyReportActivity : BaseActivity() {
 
     }
 
-    fun UserdetailAPi() {
-        if (NetworkUtils.isInternetAvailable(this)) {
-            val token = "Bearer " + userPref.getToken().toString()
-            viewmodel.Hitmonthlydata(token)
-
-        } else {
-            toast(this, "Please check your Internet Connection")
-        }
-
-
-    }
-
-
     private fun observer() {
 
-        viewmodel.monthlyReportreponse.observe(this) { response ->
+        viewmodel.dashBoardResponse.observe(this) { response ->
             response?.let {
                 datalist.clear()
-                datalist.addAll(it.users)
+                datalist.addAll(it.user)
                 adapter.updateList(datalist)
                 binding.totalitem.text = datalist.count().toString()
             }
