@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.teen.videoplayer.Model.DashBoardFilter
 import com.teen.videoplayer.Model.DashBoardUserDetailsResponse
+import com.teen.videoplayer.Model.DashboardCountResponse
 import com.teen.videoplayer.Model.DeleteUserResponse
+import com.teen.videoplayer.Model.GetAllIMagesResponse
 import com.teen.videoplayer.Model.LoginResponse
 import com.teen.videoplayer.Model.MonthlyReportResponse
 import com.teen.videoplayer.Model.RegisterResponse
@@ -27,9 +29,11 @@ class DashBoardViewmodel @Inject constructor(
     var errorlogin = MutableLiveData<Throwable>()
     var progresslogin = MutableLiveData<Boolean>()
     val dashBoardResponse = MutableLiveData<DashBoardUserDetailsResponse>()
+    val dashBoardResponsecounts = MutableLiveData<DashboardCountResponse>()
     val monthlyReportreponse = MutableLiveData<MonthlyReportResponse>()
     val dashBoardResponseFilter = MutableLiveData<DashBoardFilter>()
     val deleteUserResponse = MutableLiveData<DeleteUserResponse>()
+    val GetAllIMagesResponseList = MutableLiveData<GetAllIMagesResponse>()
 
 
     fun Hitmonthlydata(
@@ -40,6 +44,31 @@ class DashBoardViewmodel @Inject constructor(
                 // Show progress
                 progresslogin.value = true
                 val response = repository.MonthlyReport(token)
+
+                if (response.isSuccessful) {
+
+                    monthlyReportreponse.postValue(response.body())
+
+                }
+
+            } catch (e: Exception) {
+                // Handle error and post it to LiveData
+                errorlogin.postValue(e)
+            } finally {
+                // Hide progress
+                progresslogin.value = false
+            }
+        }
+    }
+
+    fun Hitweeklydata(
+        token: String,
+    ) {
+        viewModelScope.launch {
+            try {
+                // Show progress
+                progresslogin.value = true
+                val response = repository.WeeklyReport(token)
 
                 if (response.isSuccessful) {
 
@@ -75,6 +104,57 @@ class DashBoardViewmodel @Inject constructor(
             } catch (e: Exception) {
                 // Handle error and post it to LiveData
                 errorlogin.postValue(e)
+            } finally {
+                // Hide progress
+                progresslogin.value = false
+            }
+        }
+    }
+
+    fun hitGalleryImage(
+        token: String,
+    ) {
+        viewModelScope.launch {
+            try {
+                // Show progress
+                progresslogin.value = true
+                val response = repository.hitGalleryImage(token)
+
+                if (response.isSuccessful) {
+
+                    GetAllIMagesResponseList.postValue(response.body())
+
+                }
+
+            } catch (e: Exception) {
+                // Handle error and post it to LiveData
+                errorlogin.postValue(e)
+            } finally {
+                // Hide progress
+                progresslogin.value = false
+            }
+        }
+    }
+
+    fun HitDashboardCount(
+        token: String,
+    ) {
+        viewModelScope.launch {
+            try {
+                // Show progress
+                progresslogin.value = true
+                val response = repository.DashboardCount(token)
+
+                if (response.isSuccessful) {
+
+                    dashBoardResponsecounts.postValue(response.body())
+
+                }
+
+            } catch (e: Exception) {
+                // Handle error and post it to LiveData
+                errorlogin.postValue(e)
+
             } finally {
                 // Hide progress
                 progresslogin.value = false
@@ -119,6 +199,33 @@ class DashBoardViewmodel @Inject constructor(
                 // Show progress
                 progresslogin.value = true
                 val response = repository.deleteUserDetails(token,userid)
+
+                if (response.isSuccessful) {
+
+                    deleteUserResponse.postValue(response.body())
+
+                }
+
+            } catch (e: Exception) {
+                // Handle error and post it to LiveData
+                errorlogin.postValue(e)
+            } finally {
+                // Hide progress
+                progresslogin.value = false
+            }
+        }
+    }
+
+
+    fun deleteUserImages(
+        token: String,
+        Imageid: String,
+    ) {
+        viewModelScope.launch {
+            try {
+                // Show progress
+                progresslogin.value = true
+                val response = repository.deleteUserImages(token,Imageid)
 
                 if (response.isSuccessful) {
 

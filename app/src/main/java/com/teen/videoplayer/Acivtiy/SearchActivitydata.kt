@@ -51,24 +51,15 @@ class SearchActivitydata : BaseActivity() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = dashboardAdapter(this, emptyList(), onItemClick = { position, flag ->
 
-
             if (flag==1){
-                val intent = Intent(this,AddUserActivity::class.java)
-                intent.putExtra("flag",flag)
-                intent.putExtra("UserId",datalist[position].id.toString())
-                intent.putExtra("name",datalist[position].name)
-                intent.putExtra("number",datalist[position].phone)
-                intent.putExtra("imageurl",datalist[position].file)
-                intent.putExtra("date",datalist[position].created_at)
+                val intent = Intent(this, AddUserActivity::class.java)
+                intent.putExtra("userDetails", datalist[position])
+                intent.putExtra("flag", flag)
                 startActivity(intent)
             }else if (flag==3){
-                val intent = Intent(this,AddUserActivity::class.java)
-                intent.putExtra("flag",flag)
-                intent.putExtra("UserId",datalist[position].id.toString())
-                intent.putExtra("name",datalist[position].name)
-                intent.putExtra("number",datalist[position].phone)
-                intent.putExtra("imageurl",datalist[position].file)
-                intent.putExtra("date",datalist[position].created_at)
+                val intent = Intent(this, AddUserActivity::class.java)
+                intent.putExtra("userDetails", datalist[position])
+                intent.putExtra("flag", flag)
                 startActivity(intent)
             }
             else if(flag==2){

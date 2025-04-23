@@ -7,11 +7,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import com.teen.videoplayer.BaseActivity
 import com.teen.videoplayer.MainActivity
 import com.teen.videoplayer.R
 import com.teen.videoplayer.databinding.ActivityGetStartedPageBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class GetStartedPage : BaseActivity() {
@@ -20,7 +23,6 @@ class GetStartedPage : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_get_started_page)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_get_started_page)
 
         binding.startbtn.setOnClickListener {
@@ -31,9 +33,12 @@ class GetStartedPage : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        if (userPref.isLogin){
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
+        lifecycleScope.launch {
+            delay(100)
+            if (userPref.isLogin) {
+                startActivity(Intent(this@GetStartedPage, MainActivity::class.java))
+                finish()
+            }
         }
     }
 }

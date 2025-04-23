@@ -7,6 +7,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -18,40 +19,53 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    @Singleton
-    @Provides
-    fun provideOkHttp(): OkHttpClient {
-        val loggingInterceptor = HttpLoggingInterceptor()
-        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
 
-        val builder = OkHttpClient.Builder()
-            .connectTimeout((60 * 5).toLong(), TimeUnit.SECONDS)
-            .readTimeout((60 * 5).toLong(), TimeUnit.SECONDS)
-            .addInterceptor(loggingInterceptor)
-        builder.addInterceptor { chain ->
-            val original = chain.request()
-            val requestBuilder = original.newBuilder()
-            requestBuilder.header("Content-Type", "application/json")
-            requestBuilder.method(original.method, original.body)
-            val request = requestBuilder.build()
-            chain.proceed(request)
-        }
-        return builder.build()
+    @Provides
+    @Singleton
+    fun provideGson(): Gson {
+        return GsonBuilder()
+            .setLenient()
+            .create()
     }
 
-    @Singleton
     @Provides
-    @Named("loggingInterceptor")
+    @Singleton
     fun provideLoggingInterceptor(): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().apply {
-            this.level = HttpLoggingInterceptor.Level.BODY
+            level = HttpLoggingInterceptor.Level.BODY
         }
     }
 
-    var gson: Gson = GsonBuilder().setLenient().create()
+    @Provides
+    @Singleton
+    fun provideHeaderInterceptor(): Interceptor {
+        return Interceptor { chain ->
+            val request = chain.request().newBuilder()
+                .addHeader("Content-Type", "application/json")
+                // You can add token header here if needed
+                .build()
+            chain.proceed(request)
+        }
+    }
 
     @Provides
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    @Singleton
+    fun provideOkHttpClient(
+        loggingInterceptor: HttpLoggingInterceptor,
+        headerInterceptor: Interceptor
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .addInterceptor(headerInterceptor)
+            .addInterceptor(loggingInterceptor)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(gson))
@@ -60,8 +74,8 @@ object NetworkModule {
     }
 
     @Provides
+    @Singleton
     fun provideApiClient(retrofit: Retrofit): ApiService {
         return retrofit.create(ApiService::class.java)
     }
-
 }

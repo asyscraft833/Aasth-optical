@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,6 +20,7 @@ import com.teen.videoplayer.Acivtiy.TotalCustomerActivity
 import com.teen.videoplayer.Adapters.MenuAdapter
 import com.teen.videoplayer.Adapters.dashboardAdapter
 import com.teen.videoplayer.Model.UserDetails
+import com.teen.videoplayer.Utils.ImageViewerUtils.showUserDeleteAlertBox
 import com.teen.videoplayer.Utils.NetworkUtils
 import com.teen.videoplayer.ViewModels.DashBoardViewmodel
 import com.teen.videoplayer.databinding.ActivityMainBinding
@@ -33,6 +35,7 @@ class MainActivity : BaseActivity() {
     lateinit var adapter: dashboardAdapter
 
     var datalist = mutableListOf<UserDetails>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -43,6 +46,12 @@ class MainActivity : BaseActivity() {
         }
 
         binding.monthlycard.setOnClickListener {
+            val intent = Intent(this, MonthlyReportActivity::class.java)
+            intent.putExtra("flag", true)
+            startActivity(intent)
+        }
+
+        binding.newweekdatacard.setOnClickListener {
             val intent = Intent(this, MonthlyReportActivity::class.java)
             startActivity(intent)
         }
@@ -67,17 +76,18 @@ class MainActivity : BaseActivity() {
             toggleDrawer()
         }
 
-        binding.logout.setOnClickListener {
-            userPref.clearPref()
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
+        binding.logoutbtn.setOnClickListener {
+
+            showLogoutDialog()
+
         }
 
 
         UserdetailAPi()
         observer()
         SetupRecylerview()
-        SetSidemenuList()
+//        SetSidemenuList()
+        HandleMode()
 
 
     }
@@ -93,11 +103,7 @@ class MainActivity : BaseActivity() {
 
     fun SetSidemenuList() {
         val menuItems = listOf(
-            MenuItem(R.drawable.baseline_person_243, "My Profile"),
-            MenuItem(R.drawable.statistics_icon, "Statistics"),
-            MenuItem(R.drawable.baseline_settings_24, "Settings"),
-            MenuItem(R.drawable.upload_24px, "Export"),
-            MenuItem(R.drawable.publish_24px, "Import"),
+
             MenuItem(R.drawable.baseline_logout_24, "Logout"),
         )
 
@@ -106,42 +112,56 @@ class MainActivity : BaseActivity() {
 
     }
 
+    private fun HandleMode() {
+
+        if (userPref.isDarkMode) binding.modeSwitchCase.isChecked =
+            true else binding.modeSwitchCase.isChecked = false
+
+
+
+        binding.modeSwitchCase.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                userPref.isDarkMode = true
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                userPref.isDarkMode = false
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+        }
+
+    }
+
 
     fun DrawerClickHandle(menuItem: MenuItem) {
 
 
         when (menuItem.text) {
-            "My Profile" -> {
-                toast(this, "Coming Soon")
-
-            }
-
-            "Settings" -> {
-
-                toast(this, "Coming Soon")
-            }
-
-            "Export" -> {
-
-                toast(this, "Coming Soon")
-            }
-
-            "Import" -> {
-
-                toast(this, "Coming Soon")
-            }
-
-            "Statistics" -> {
-
-                val intent = Intent(this, MonthlyReportActivity::class.java)
-                startActivity(intent)
-            }
-
             "Logout" -> {
                 performLogout()
             }
         }
         binding.drawerLayout.closeDrawers()
+    }
+
+    private fun showLogoutDialog() {
+        // Create the AlertDialog builder
+        val builder = AlertDialog.Builder(this, R.style.CustomAlertDialog)
+
+        // Set the message for the dialog
+        builder.setMessage("Are you sure you want to logout?")
+            .setCancelable(false)  // Disable touch outside to dismiss
+            .setPositiveButton("Yes") { dialog, id ->
+                // Handle logout here
+                performLogout()
+            }
+            .setNegativeButton("No") { dialog, id ->
+                // Dismiss the dialog when the user clicks No
+                dialog.dismiss()
+            }
+
+        // Create and show the dialog
+        val alert = builder.create()
+        alert.show()
     }
 
     private fun performLogout() {
@@ -157,10 +177,10 @@ class MainActivity : BaseActivity() {
     }
 
 
-    override fun onResume() {
-        super.onResume()
-        UserdetailAPi()
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        UserdetailAPi()
+//    }
 
     private fun SetupRecylerview() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
@@ -168,24 +188,26 @@ class MainActivity : BaseActivity() {
 
             if (flag == 1) {
                 val intent = Intent(this, AddUserActivity::class.java)
+                intent.putExtra("userDetails", datalist[position])
                 intent.putExtra("flag", flag)
-                intent.putExtra("UserId", datalist[position].id.toString())
-                intent.putExtra("name", datalist[position].name)
-                intent.putExtra("number", datalist[position].phone)
-                intent.putExtra("imageurl", datalist[position].file)
-                intent.putExtra("date", datalist[position].created_at)
                 startActivity(intent)
+
             } else if (flag == 3) {
                 val intent = Intent(this, AddUserActivity::class.java)
+                intent.putExtra("userDetails", datalist[position])
                 intent.putExtra("flag", flag)
-                intent.putExtra("UserId", datalist[position].id.toString())
-                intent.putExtra("name", datalist[position].name)
-                intent.putExtra("number", datalist[position].phone)
-                intent.putExtra("imageurl", datalist[position].file)
-                intent.putExtra("date", datalist[position].created_at)
                 startActivity(intent)
+
             } else if (flag == 2) {
-                dialogfun(datalist[position].id.toString())
+
+                showUserDeleteAlertBox(this) { confirmed ->
+                    if (confirmed) {
+                        datalist.removeAt(position)
+                        adapter.notifyDataSetChanged()
+                        DeletuserEntry(datalist[position].id.toString())
+                    }
+                }
+
 
             } else {
                 val dialIntent = Intent(Intent.ACTION_DIAL).apply {
@@ -199,27 +221,13 @@ class MainActivity : BaseActivity() {
     }
 
 
-    fun dialogfun(userId: String) {
-        AlertDialog.Builder(this)
-            .setTitle("Delete")
-            .setMessage("Do you want to delete this User?")
-            .setPositiveButton("Yes") { dialog, _ ->
-                DeletuserEntry(userId)
-                Toast.makeText(this, "user deleted Successfuly", Toast.LENGTH_SHORT).show()
-                dialog.dismiss()
-            }
-            .setNegativeButton("No") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
-
-    }
-
-
     fun UserdetailAPi() {
         if (NetworkUtils.isInternetAvailable(this)) {
             val token = "Bearer " + userPref.getToken().toString()
+
             viewmodel.hitDashBoard(token)
+            viewmodel.HitDashboardCount(token)
+
 
         } else {
             toast(this, "Please check your Internet Connection")
@@ -251,8 +259,19 @@ class MainActivity : BaseActivity() {
             }
         }
 
+
+        viewmodel.dashBoardResponsecounts.observe(this) { response ->
+            response?.let {
+
+                binding.totalcustomercount.text = it.totaluserscount.toString() + " Users"
+                binding.weekusercount.text = it.weeklyuserscount.toString() + " Users"
+                binding.monthusercount.text = it.monthlyuserscount.toString() + " New users"
+                binding.totalimagecount.text = it.totalimagescount.toString() + " Images"
+            }
+        }
+
         viewmodel.deleteUserResponse.observe(this) { response ->
-            UserdetailAPi()
+            toast(this, response.message.toString())
         }
 
         viewmodel.progresslogin.observe(this) {

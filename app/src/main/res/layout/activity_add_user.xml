@@ -181,7 +181,9 @@
                             android:drawableStart="@drawable/user_ic"
                             android:padding="@dimen/_10sdp"
                             android:singleLine="true"
+                            android:drawableTint="@color/hintcolor"
                             android:layout_marginTop="@dimen/_2sdp"
+                            android:textColor="@color/textcolor"
                             android:drawablePadding="5dp"
                             android:hint="Enter customer name"
                             android:textColorHint="@color/hintcolor"
@@ -205,7 +207,9 @@
                             android:drawableStart="@drawable/call_24px"
                             android:padding="@dimen/_10sdp"
                             android:layout_marginTop="@dimen/_2sdp"
+                            android:textColor="@color/textcolor"
                             android:maxLength="10"
+                            android:drawableTint="@color/hintcolor"
                             android:singleLine="true"
                             android:drawablePadding="5dp"
                             android:inputType="number"
@@ -328,6 +332,7 @@
                             android:layout_width="@dimen/_80sdp"
                             android:id="@+id/localview"
                             android:layout_height="@dimen/_80sdp"
+                            android:layout_marginStart="@dimen/_10sdp"
                             android:layout_marginTop="@dimen/_10sdp"
                             app:cardCornerRadius="8dp">
 
@@ -350,9 +355,10 @@
                             android:layout_marginTop="@dimen/_30sdp"
                             android:backgroundTint="@color/primarycolor"
                             android:minWidth="@dimen/_80sdp"
+
                             android:paddingVertical="@dimen/_5sdp"
                             android:text="save"
-                            android:textColor="@color/white"
+                            android:textColor="@color/btncolor"
                             android:textSize="@dimen/_15sdp"
                             app:cornerRadius="@dimen/_5sdp" />
 

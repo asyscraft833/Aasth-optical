@@ -11,22 +11,19 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.teen.videoplayer.Model.UserDetails
-import com.teen.videoplayer.Model.Usermonthly
 import com.teen.videoplayer.Model.data
 import com.teen.videoplayer.R
+import com.teen.videoplayer.Utils.ImageViewerUtils
 import com.teen.videoplayer.databinding.DashbardRowLayoutBinding
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class MonthlyReportAdapter(
     private val context: Context,
-    private var items: List<Usermonthly>,
+    private var items: List<UserDetails>,
     private val onItemClick: (Int,Int) -> Unit
 
 ) : RecyclerView.Adapter<MonthlyReportAdapter.ViewHolder>() {
@@ -51,10 +48,10 @@ class MonthlyReportAdapter(
 
         holder.binding.apply {
             username.text = item.name
-            lastdate.text = item.created_at
             number.text = item.phone
-
-
+            if (item.images.isNotEmpty()){
+                lastdate.text = item.images[0].date
+            }
 
             edit.setOnClickListener {
                 onItemClick(position,1)
@@ -67,103 +64,49 @@ class MonthlyReportAdapter(
                 context.startActivity(dialIntent)
             }
 
+
             delete.setOnClickListener {
                 onItemClick(position,2)
             }
 
 
             imagefile.setOnClickListener {
-                val imageList = items.map { it.file ?: "" }
 
-
-                val dataList = items.mapNotNull {
-                    val date = item.created_at
-                    val file = it.file
-                    if (!file.isNullOrEmpty()) data(date, file) else null
+                val dataList = item.images.map { image ->
+                    data(
+                        imageid = image.imageid,
+                        date = image.date,
+                        file = image.file
+                    )
                 }
 
 
-                fullImageview(
-                    imageList = dataList,
-                    startPosition = position
-                )
+                ImageViewerUtils.fullImageview(context, dataList,startPosition = position)
+
             }
 
-            Glide
-                .with(context)
-                .load(item.file)
-                .centerCrop()
-                .placeholder(R.drawable.placeholder_image)
-                .into(imagefile)
+            if (item.images.isNotEmpty()) {
+                Glide.with(context)
+                    .load(item.images[0].file)
+                    .centerCrop()
+                    .placeholder(R.drawable.placeholder_image)
+                    .into(imagefile)
+            } else {
+                imagefile.setImageResource(R.drawable.placeholder_image)
+            }
 
 
         }
     }
 
-    fun updateList(newlist : List<Usermonthly>){
+    fun updateList(newlist : List<UserDetails>){
         items = newlist
         notifyDataSetChanged()
     }
 
 
 
-    fun fullImageview(imageList: List<data>,  startPosition: Int = 0) {
 
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_full_image, null)
-        val viewPager = dialogView.findViewById<ViewPager2>(R.id.imageViewPager)
-        val crossbutton = dialogView.findViewById<CardView>(R.id.crossbutton)
-        val maxlayout = dialogView.findViewById<CardView>(R.id.maxlayout)
-        val imgToggleSize = dialogView.findViewById<ImageView>(R.id.imgToggleSize)
-
-
-
-
-        var isFullScreen = false
-
-
-
-        val adapter = FullImagePagerAdapter(context, imageList)
-        viewPager.adapter = adapter
-        viewPager.setCurrentItem(startPosition, false)
-
-        val dialog = Dialog(context)
-        dialog.setContentView(dialogView)
-        dialog.window?.setLayout(
-            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 350f, context.resources.displayMetrics).toInt(),
-            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400f, context.resources.displayMetrics).toInt()
-        )
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.window?.setGravity(Gravity.CENTER)
-
-
-        val defaultWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 350f, context.resources.displayMetrics).toInt()
-        val defaultHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400f, context.resources.displayMetrics).toInt()
-
-
-
-        maxlayout.setOnClickListener {
-            if (isFullScreen) {
-                // Minimize
-                dialog.window?.setLayout(defaultWidth, defaultHeight)
-                imgToggleSize.setImageResource(R.drawable.open_in_full_24px)
-                isFullScreen = false
-            } else {
-                // Maximize
-                dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-                imgToggleSize.setImageResource(R.drawable.close_fullscreen_24px)
-                isFullScreen = true
-            }
-        }
-
-        dialogView.setOnClickListener {
-            dialog.dismiss()
-        }
-        crossbutton.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.show()
-    }
 
 
 }

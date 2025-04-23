@@ -1,13 +1,16 @@
 package com.teen.videoplayer.Model
 
-data class UserImageResponse(
+
+data class GetAllIMagesResponse(
     val message: String,
     val success: Boolean,
-    val data: List<data>,
+    val data: List<dataAll>,
 )
 
-data class data(
+
+data class dataAll(
     val imageid: Int,
     val date: String,
-    val file: String,
+    val image: String,
 )
+

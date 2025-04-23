@@ -18,7 +18,7 @@
             android:layout_height="30dp"
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginEnd="@dimen/_10sdp"
-            app:cardBackgroundColor="@color/white"
+            app:cardBackgroundColor="@color/cardaddbg"
             app:cardCornerRadius="@dimen/_30sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -30,7 +30,8 @@
                 android:contentDescription="Full Image"
                 android:padding="@dimen/_3sdp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/clear_icon" />
+                android:src="@drawable/clear_icon"
+                app:tint="@color/black" />
 
         </androidx.cardview.widget.CardView>
 
@@ -40,7 +41,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginEnd="@dimen/_5sdp"
-            app:cardBackgroundColor="@color/white"
+            app:cardBackgroundColor="@color/cardaddbg"
             app:cardCornerRadius="@dimen/_30sdp"
             app:layout_constraintBottom_toBottomOf="@+id/crossbutton"
             app:layout_constraintEnd_toStartOf="@+id/crossbutton"
@@ -53,7 +54,8 @@
                 android:contentDescription="Full Image"
                 android:padding="@dimen/_3sdp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/open_in_full_24px" />
+                android:src="@drawable/open_in_full_24px"
+                app:tint="@color/black" />
 
         </androidx.cardview.widget.CardView>
 
@@ -67,20 +69,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/imgFull"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="Full Image"
-            android:scaleType="fitXY"
-            android:src="@drawable/image"
-            android:visibility="gone"
+
+        <TextView
+            android:id="@+id/imageuploaddate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_margin="@dimen/_10sdp"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingVertical="@dimen/_8sdp"
+            android:background="@drawable/card_statics_bg"
+            android:text="12-11-2001"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_16ssp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

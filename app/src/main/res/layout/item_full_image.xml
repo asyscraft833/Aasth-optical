@@ -11,28 +11,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY"
-        app:layout_constraintBottom_toTopOf="@+id/imageuploaddate"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-    <TextView
-        android:id="@+id/imageuploaddate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_margin="@dimen/_10sdp"
-        android:paddingHorizontal="@dimen/_10sdp"
-        android:paddingVertical="@dimen/_8sdp"
-        android:background="@drawable/card_statics_bg"
-        android:text="12-11-2001"
-        android:textColor="@color/black"
-        android:textSize="@dimen/_16ssp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

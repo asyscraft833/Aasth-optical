@@ -12,11 +12,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.teen.videoplayer.Adapters.MonthlyReportAdapter
-import com.teen.videoplayer.Adapters.dashboardAdapter
 import com.teen.videoplayer.BaseActivity
 import com.teen.videoplayer.Model.UserDetails
-import com.teen.videoplayer.Model.Usermonthly
 import com.teen.videoplayer.R
+import com.teen.videoplayer.Utils.ImageViewerUtils.showUserDeleteAlertBox
 import com.teen.videoplayer.Utils.NetworkUtils
 import com.teen.videoplayer.ViewModels.DashBoardViewmodel
 import com.teen.videoplayer.databinding.ActivityMonthlyReportBinding
@@ -24,12 +23,12 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MonthlyReportActivity : BaseActivity() {
-    lateinit var binding : ActivityMonthlyReportBinding
+    lateinit var binding: ActivityMonthlyReportBinding
 
     private val viewmodel: DashBoardViewmodel by viewModels()
     lateinit var adapter: MonthlyReportAdapter
 
-    var datalist = mutableListOf<Usermonthly>()
+    var datalist = mutableListOf<UserDetails>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,8 +37,17 @@ class MonthlyReportActivity : BaseActivity() {
 
         binding.backbtn.setOnClickListener { finish() }
 
+        val flag = intent.getBooleanExtra("flag", false)
 
-        UserdetailAPi()
+        if (flag) {
+            binding.titletv.text = "Monthly Report"
+            UserdetailAPi()
+        } else {
+            binding.titletv.text = "Weekly Report"
+            UserWeeklyData()
+        }
+
+
         observer()
         SetupRecylerview()
         setupSearchFilter()
@@ -68,33 +76,38 @@ class MonthlyReportActivity : BaseActivity() {
     }
 
 
-
     private fun SetupRecylerview() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = MonthlyReportAdapter(this, emptyList(), onItemClick = { position, flag ->
 
             if (flag == 1) {
+
+
                 val intent = Intent(this, AddUserActivity::class.java)
+                intent.putExtra("userDetails", datalist[position])
                 intent.putExtra("flag", flag)
-                intent.putExtra("UserId", datalist[position].id.toString())
-                intent.putExtra("name", datalist[position].name)
-                intent.putExtra("number", datalist[position].phone)
-                intent.putExtra("imageurl", datalist[position].file)
-                intent.putExtra("date", datalist[position].created_at)
                 startActivity(intent)
-            } else if (flag == 3) {
-                val intent = Intent(this, AddUserActivity::class.java)
-                intent.putExtra("flag", flag)
-                intent.putExtra("UserId", datalist[position].id.toString())
-                intent.putExtra("name", datalist[position].name)
-                intent.putExtra("number", datalist[position].phone)
-                intent.putExtra("imageurl", datalist[position].file)
-                intent.putExtra("date", datalist[position].created_at)
-                startActivity(intent)
+
             } else if (flag == 2) {
-                dialogfun(datalist[position].id.toString())
+
+
+                showUserDeleteAlertBox(this) { confirmed ->
+                    if (confirmed) {
+                        datalist.removeAt(position)
+                        adapter.notifyDataSetChanged()
+                        DeletuserEntry(datalist[position].id.toString())
+                    }
+                }
+
+            } else if (flag == 3) {
+
+                val intent = Intent(this, AddUserActivity::class.java)
+                intent.putExtra("flag", flag)
+                intent.putExtra("userDetails", datalist[position])
+                startActivity(intent)
 
             } else {
+
                 val dialIntent = Intent(Intent.ACTION_DIAL).apply {
                     data = Uri.parse("tel:$flag")
                 }
@@ -102,6 +115,7 @@ class MonthlyReportActivity : BaseActivity() {
 
             }
         })
+
         binding.recyclerView.adapter = adapter
     }
 
@@ -142,6 +156,16 @@ class MonthlyReportActivity : BaseActivity() {
             toast(this, "Please check your Internet Connection")
         }
 
+    }
+
+    fun UserWeeklyData() {
+        if (NetworkUtils.isInternetAvailable(this)) {
+            val token = "Bearer " + userPref.getToken().toString()
+            viewmodel.Hitweeklydata(token)
+
+        } else {
+            toast(this, "Please check your Internet Connection")
+        }
 
     }
 

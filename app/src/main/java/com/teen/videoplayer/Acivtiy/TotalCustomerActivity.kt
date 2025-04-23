@@ -7,20 +7,15 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.teen.videoplayer.Adapters.MonthlyReportAdapter
 import com.teen.videoplayer.Adapters.dashboardAdapter
 import com.teen.videoplayer.BaseActivity
 import com.teen.videoplayer.Model.UserDetails
-import com.teen.videoplayer.Model.Usermonthly
 import com.teen.videoplayer.R
+import com.teen.videoplayer.Utils.ImageViewerUtils.showUserDeleteAlertBox
 import com.teen.videoplayer.Utils.NetworkUtils
 import com.teen.videoplayer.ViewModels.DashBoardViewmodel
 import com.teen.videoplayer.databinding.ActivityTotalCustomerBinding
@@ -28,7 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class TotalCustomerActivity : BaseActivity() {
-    lateinit var binding : ActivityTotalCustomerBinding
+    lateinit var binding: ActivityTotalCustomerBinding
 
     private val viewmodel: DashBoardViewmodel by viewModels()
     lateinit var adapter: dashboardAdapter
@@ -79,24 +74,23 @@ class TotalCustomerActivity : BaseActivity() {
 
             if (flag == 1) {
                 val intent = Intent(this, AddUserActivity::class.java)
+                intent.putExtra("userDetails", datalist[position])
                 intent.putExtra("flag", flag)
-                intent.putExtra("UserId", datalist[position].id.toString())
-                intent.putExtra("name", datalist[position].name)
-                intent.putExtra("number", datalist[position].phone)
-                intent.putExtra("imageurl", datalist[position].file)
-                intent.putExtra("date", datalist[position].created_at)
                 startActivity(intent)
             } else if (flag == 3) {
                 val intent = Intent(this, AddUserActivity::class.java)
+                intent.putExtra("userDetails", datalist[position])
                 intent.putExtra("flag", flag)
-                intent.putExtra("UserId", datalist[position].id.toString())
-                intent.putExtra("name", datalist[position].name)
-                intent.putExtra("number", datalist[position].phone)
-                intent.putExtra("imageurl", datalist[position].file)
-                intent.putExtra("date", datalist[position].created_at)
                 startActivity(intent)
             } else if (flag == 2) {
-                dialogfun(datalist[position].id.toString())
+
+                showUserDeleteAlertBox(this) { confirmed ->
+                    if (confirmed) {
+                        datalist.removeAt(position)
+                        adapter.notifyDataSetChanged()
+                        DeletuserEntry(datalist[position].id.toString())
+                    }
+                }
 
             } else {
                 val dialIntent = Intent(Intent.ACTION_DIAL).apply {
@@ -110,21 +104,6 @@ class TotalCustomerActivity : BaseActivity() {
     }
 
 
-    fun dialogfun(userId: String) {
-        AlertDialog.Builder(this)
-            .setTitle("Delete")
-            .setMessage("Do you want to delete this User?")
-            .setPositiveButton("Yes") { dialog, _ ->
-                DeletuserEntry(userId)
-                Toast.makeText(this, "user deleted Successfuly", Toast.LENGTH_SHORT).show()
-                dialog.dismiss()
-            }
-            .setNegativeButton("No") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
-
-    }
 
 
     fun UserdetailAPi() {
@@ -163,7 +142,8 @@ class TotalCustomerActivity : BaseActivity() {
         }
 
         viewmodel.deleteUserResponse.observe(this) { response ->
-            UserdetailAPi()
+//            UserdetailAPi()
+            toast(this,response.message.toString())
         }
 
         viewmodel.progresslogin.observe(this) {

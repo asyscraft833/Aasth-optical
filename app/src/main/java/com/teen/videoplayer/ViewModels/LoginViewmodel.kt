@@ -30,6 +30,7 @@ class LoginViewmodel @Inject constructor(
         mobile: String,
         password: String,
         mpin: String,
+
     ) {
         viewModelScope.launch {
             try {
@@ -46,7 +47,7 @@ class LoginViewmodel @Inject constructor(
                 }
 
             } catch (e: Exception) {
-                // Handle error and post it to LiveData
+
                 errorlogin.postValue(e)
             } finally {
                 // Hide progress
@@ -54,6 +55,8 @@ class LoginViewmodel @Inject constructor(
             }
         }
     }
+
+
     fun getCurrentDateTime(): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         return dateFormat.format(Date())

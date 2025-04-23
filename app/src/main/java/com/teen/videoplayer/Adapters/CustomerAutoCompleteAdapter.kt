@@ -40,14 +40,14 @@ class CustomerAutoCompleteAdapter(
 
 
 
-        if (item != null) {
-            Glide
-                .with(context)
-                .load(item.file)
-                .centerCrop()
-                .placeholder(R.drawable.placeholder_image)
-                .into(imageview)
-        }
+//        if (item != null) {
+//            Glide
+//                .with(context)
+//                .load(item.file)
+//                .centerCrop()
+//                .placeholder(R.drawable.placeholder_image)
+//                .into(imageview)
+//        }
 
         name.text = item?.name
         number.text = item?.phone

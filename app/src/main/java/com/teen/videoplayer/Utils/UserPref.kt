@@ -18,6 +18,11 @@ class UserPref @Inject constructor(@ApplicationContext context: Context) {
         set(login) = preferences.edit().putBoolean("isLoginA", login).apply()
 
 
+ var isDarkMode: Boolean
+        get() = preferences.getBoolean("Mode", false)
+        set(login) = preferences.edit().putBoolean("Mode", login).apply()
+
+
     fun clearPref() {
         preferences.edit().clear().apply()
     }

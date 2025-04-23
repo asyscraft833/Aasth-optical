@@ -29,12 +29,20 @@ open class BaseActivity : AppCompatActivity() {
     @Inject
     lateinit var userPref: UserPref
 
-        var dialog: Dialog? = null
+    var dialog: Dialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
         super.onCreate(savedInstanceState, persistentState)
          userPref=UserPref(this)
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+
+
+        AppCompatDelegate.setDefaultNightMode(
+            if (userPref.isDarkMode) AppCompatDelegate.MODE_NIGHT_YES
+            else AppCompatDelegate.MODE_NIGHT_NO
+        )
+
+
         if (Build.MANUFACTURER.equals("Xiaomi", ignoreCase = true)) {
             setMIUIStatusBarDarkMode(this, darkMode = true)
         }

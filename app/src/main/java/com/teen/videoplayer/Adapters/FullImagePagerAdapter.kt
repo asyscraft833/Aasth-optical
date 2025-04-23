@@ -20,7 +20,6 @@ class FullImagePagerAdapter(
 
     inner class ImageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val imageView: ImageView = view.findViewById(R.id.imgFullItem)
-        val imageuploaddate: TextView = view.findViewById(R.id.imageuploaddate)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
@@ -35,18 +34,7 @@ class FullImagePagerAdapter(
             .load(imageUrls[position].file)
             .placeholder(R.drawable.placeholder_image)
             .into(holder.imageView)
-        holder.imageuploaddate.text = convertDateFormat(imageUrls[position].date)
-
-        holder.imageView.setOnClickListener {
-
-        }
     }
 
-    fun convertDateFormat(inputDate: String): String {
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val outputFormat = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
 
-        val date = inputFormat.parse(inputDate)
-        return outputFormat.format(date!!)
-    }
 }

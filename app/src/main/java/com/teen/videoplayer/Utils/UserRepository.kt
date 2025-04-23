@@ -55,6 +55,11 @@ class UserRepository @Inject constructor(private val apiService: ApiService) {
         userId: String,
     ) = apiService.DeleteUserDetails(token,userId)
 
+    suspend fun deleteUserImages(
+        token: String,
+        Imageid: String,
+    ) = apiService.deleteUserImages(token,Imageid)
+
  suspend fun Userimages(
         token: String,
         userid: String,
@@ -66,9 +71,11 @@ class UserRepository @Inject constructor(private val apiService: ApiService) {
         password: String,
         mpin: String,
     ) = apiService.loginUser(
+
         createPartFromString(mobileNumber),
         createPartFromString(password),
         createPartFromString(mpin),
+
     )
 
 
@@ -77,9 +84,23 @@ class UserRepository @Inject constructor(private val apiService: ApiService) {
     ) = apiService.userDetails(token)
 
 
+    suspend fun hitGalleryImage(
+        token: String,
+    ) = apiService.hitGalleryImage(token)
+
+  suspend fun DashboardCount(
+        token: String,
+    ) = apiService.DashboardCount(token)
+
+
  suspend fun MonthlyReport(
         token: String,
     ) = apiService.MonthlyReport(token)
+
+
+suspend fun   WeeklyReport(
+        token: String,
+    ) = apiService.WeeklyReport(token)
 
 
   suspend fun userDetailsFilter(

@@ -3,7 +3,9 @@ package com.teen.videoplayer.Utils
 import com.teen.videoplayer.Model.AddUserModel
 import com.teen.videoplayer.Model.DashBoardFilter
 import com.teen.videoplayer.Model.DashBoardUserDetailsResponse
+import com.teen.videoplayer.Model.DashboardCountResponse
 import com.teen.videoplayer.Model.DeleteUserResponse
+import com.teen.videoplayer.Model.GetAllIMagesResponse
 import com.teen.videoplayer.Model.LoginResponse
 import com.teen.videoplayer.Model.MonthlyReportResponse
 import com.teen.videoplayer.Model.RegisterResponse
@@ -39,17 +41,32 @@ interface ApiService {
         @Part file: MultipartBody.Part? = null
     ): Response<RegisterResponse>
 
-
     @GET("user-details")
     suspend fun userDetails(
         @Header("authorization") token: String
     ): Response<DashBoardUserDetailsResponse>
+
+    @GET("dashboard-stats")
+    suspend fun DashboardCount(
+        @Header("authorization") token: String
+    ): Response<DashboardCountResponse>
 
 
     @GET("monthly")
     suspend fun MonthlyReport(
         @Header("authorization") token: String
     ): Response<MonthlyReportResponse>
+
+
+  @GET("weekly")
+    suspend fun WeeklyReport(
+        @Header("authorization") token: String
+    ): Response<MonthlyReportResponse>
+
+    @GET("all-images")
+    suspend fun hitGalleryImage(
+        @Header("authorization") token: String
+    ): Response<GetAllIMagesResponse>
 
 
     @Multipart
@@ -72,6 +89,12 @@ interface ApiService {
 
     @DELETE("user-delete/{id}")
     suspend fun DeleteUserDetails(
+        @Header("authorization") authorization: String,
+        @Path("id") id: String,
+    ): Response<DeleteUserResponse>
+
+    @DELETE("delete-image/{id}")
+    suspend fun deleteUserImages(
         @Header("authorization") authorization: String,
         @Path("id") id: String,
     ): Response<DeleteUserResponse>

@@ -2,6 +2,7 @@ package com.teen.videoplayer.Acivtiy
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
@@ -64,14 +65,13 @@ class AddUserActivity : BaseActivity() {
     private lateinit var galleryLauncher: ActivityResultLauncher<Intent>
     private lateinit var cropLauncher: ActivityResultLauncher<Intent>
 
-    lateinit var adapter : ImageAdapter
-
     private var imageFile: File? = null
-    private var imageurl: String? = null
 
     private lateinit var autoCompleteAdapter: CustomerAutoCompleteAdapter
+
     private lateinit var autoCompleteAdapternumber: CustomerAutoCompleteNumberAdapter
     private var activeField: String = ""
+    lateinit var adapter : ImageAdapter
 
     val imagedatalist = mutableListOf<data>()
 
@@ -82,17 +82,23 @@ class AddUserActivity : BaseActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_add_user)
 
         flag = intent.getIntExtra("flag",0)
+        val userDetails = intent.getParcelableExtra<UserDetails>("userDetails")
+
 
         if (flag==1  || flag==3) {
-            binding.registerbutton.text = "Update"
-            userid = intent.getStringExtra("UserId").toString()
-            binding.etname.setText(intent.getStringExtra("name"))
-            binding.etmobile.setText(intent.getStringExtra("number"))
-            binding.etDate.setText(intent.getStringExtra("date"))
-            imageurl = intent.getStringExtra("imageurl").toString()
-            Log.d("updatedata","Userid  : "+userid)
 
-            HitUserImages(userid)
+            binding.registerbutton.text = "Update"
+            if (userDetails != null) {
+                userid = userDetails.id.toString()
+                binding.etname.setText(userDetails.name)
+                binding.etmobile.setText(userDetails.phone)
+                if (userDetails.images.isNotEmpty()) binding.etDate.setText(userDetails.images[0].date)
+
+                Log.d("updatedata","Userid  : "+userid)
+            }
+
+
+            HitUserImages()
         }
 
         if (flag==3)  {
@@ -135,26 +141,9 @@ class AddUserActivity : BaseActivity() {
 
             binding.etname.setText(selectedCustomer?.name ?: "")
             binding.etmobile.setText(selectedCustomer?.phone ?: "")
-            selectedCustomer?.created_at?.let { setdatefromate(it) }
 
             userid = selectedCustomer?.id.toString()
             flag = 1
-
-            imagedatalist.clear()
-
-            // Get new image list if available
-            val datalist = selectedCustomer?.file?.let {
-                data(selectedCustomer.created_at, it) // Ensure this function returns a list
-            }
-
-            datalist?.let {
-                imagedatalist.addAll(listOf(it))
-                adapter.updateList(imagedatalist)
-            } ?: run {
-                adapter.updateList(emptyList())
-            }
-
-
 
         }
 
@@ -164,24 +153,9 @@ class AddUserActivity : BaseActivity() {
             val selectedCustomer = autoCompleteAdapternumber.getItem(position)
             binding.etname.setText(selectedCustomer?.name ?: "")
             binding.etmobile.setText(selectedCustomer?.phone ?: "")
-            selectedCustomer?.created_at?.let { setdatefromate(it) }
 
             userid = selectedCustomer?.id.toString()
             flag = 1
-            imagedatalist.clear()
-
-
-            // Get new image list if available
-            val datalist = selectedCustomer?.file?.let {
-                data(selectedCustomer.created_at, it)
-            }
-
-            datalist?.let {
-                imagedatalist.addAll(listOf(it))
-                adapter.updateList(imagedatalist)
-            } ?: run {
-                adapter.updateList(emptyList())
-            }
 
         }
 
@@ -246,7 +220,9 @@ class AddUserActivity : BaseActivity() {
 
 
 
-       adapter = ImageAdapter(this,emptyList(), onItemClick = { position, flag ->
+       adapter = ImageAdapter(this,imagedatalist, onItemClick = { imageId , position ->
+
+           showDeleteConfirmationDialog(imageId.toString(),position)
 
         })
 
@@ -258,19 +234,27 @@ class AddUserActivity : BaseActivity() {
         RecieveCamera()
     }
 
-    private fun setdatefromate(date : String){
+    private fun showDeleteConfirmationDialog(id : String, position : Int) {
+        AlertDialog.Builder(this,R.style.CustomAlertDialog)
+            .setTitle("Delete Image")
+            .setMessage("Are you sure you want to delete this image?")
+            .setPositiveButton("OK") { dialog, _ ->
 
-        val finalDate = try {
-            val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-            val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val date = inputFormat.parse(date)
-            outputFormat.format(date!!)
-        } catch (e: Exception) {
-            ""
-        }
+                imagedatalist.removeAt(position)
+                adapter.notifyDataSetChanged()
 
-        binding.etDate.setText(finalDate)
+
+                DeleteUserImage(id)
+                dialog.dismiss()
+
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
     }
+
 
 
 
@@ -301,6 +285,17 @@ class AddUserActivity : BaseActivity() {
         if (NetworkUtils.isInternetAvailable(this)){
             val token = "Bearer "+userPref.getToken().toString()
             viewmodeldashboard.hitDashBoardFilter(token,query)
+
+        }else{
+            toast(this,"Please check your Internet Connection")
+        }
+
+    }
+
+    fun DeleteUserImage(id: String){
+        if (NetworkUtils.isInternetAvailable(this)){
+            val token = "Bearer "+userPref.getToken().toString()
+            viewmodeldashboard.deleteUserImages(token,id)
 
         }else{
             toast(this,"Please check your Internet Connection")
@@ -392,7 +387,6 @@ class AddUserActivity : BaseActivity() {
     }
 
 
-
     private fun checkpermission(type: Boolean) {
         // Check camera permission
         if (PermissionUtils.checkPermission(this, Manifest.permission.CAMERA)) {
@@ -427,9 +421,10 @@ class AddUserActivity : BaseActivity() {
         val datePickerDialog = DatePickerDialog(
             this,
             { _, year, month, day ->
-                val date = String.format("%04d-%02d-%02d", year, month + 1, day)
+                val date = String.format("%02d-%02d-%04d", day, month + 1, year)
                 binding.etDate.setText(date)
             },
+
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
             calendar.get(Calendar.DAY_OF_MONTH)
@@ -500,7 +495,7 @@ class AddUserActivity : BaseActivity() {
 
     }
 
-    private fun HitUserImages(Userid : String) {
+    private fun HitUserImages() {
         if (!NetworkUtils.isInternetAvailable(this)) {
             toast(this, "Please check Internet Connection")
             return
@@ -510,7 +505,7 @@ class AddUserActivity : BaseActivity() {
         val token = "Bearer ${userPref.getToken()}"
         viewmodel.hitUserImage(
             token,
-            Userid
+            userid
         )
 
     }
@@ -555,18 +550,28 @@ class AddUserActivity : BaseActivity() {
 
 
         viewmodel.UserImageResponseResponse.observe(this) {
+            imagedatalist.clear()
+            imagedatalist.addAll(it.data)
+            adapter.updateList(imagedatalist)
 
-            adapter.updateList(it.data)
 
+        }
+
+        viewmodeldashboard.deleteUserResponse.observe(this) {
+            toast(this,it.message.toString())
 
         }
 
         viewmodel.userRegisterResponse.observe(this) {
+            toast(this, "User Added Successfully")
              finish()
         }
 
         viewmodel.userRegisterUpdateResponse.observe(this) {
-            if (it.success) finish()
+            if (it.success) {
+                toast(this, it.message.toString())
+                finish()
+            }
         }
     }
 

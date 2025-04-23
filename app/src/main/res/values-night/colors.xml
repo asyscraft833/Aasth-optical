@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Adjusted for Night Mode -->
+    <color name="black">#FFFFFFFF</color>
+    <color name="btncolor">#FFFFFFFF</color>
+    <color name="white">#11182780</color> <!-- Dark background -->
+    <color name="dashboardcolor">#9B84C8</color> <!-- Lighter purple shade for night mode -->
+    <color name="primarycolor">#1E3A8A</color> <!-- Darker blue for night mode -->
+    <color name="cardaddbg">#1F2A3C</color> <!-- Darker background for cards -->
+    <color name="secondcolor">#FF6D2F</color> <!-- Muted orange for night mode -->
+    <color name="hintcolor">#A0A0A0</color> <!-- Lighter hint color -->
+    <color name="textcolor">#E1E1E1</color> <!-- Light gray text for night mode -->
+    <color name="greycolor">#6B7F97</color> <!-- Darker gray for night mode -->
+    <color name="accentcologrey">#C6C6C6</color> <!-- Lighter gray for accent -->
+    <color name="light_yellow">#FFE86C</color> <!-- Soft yellow for night mode -->
+    <color name="green">#4CAF50</color> <!-- Muted green for night mode -->
+    <color name="red">#FF7043</color> <!-- Softer red for night mode -->
+</resources>

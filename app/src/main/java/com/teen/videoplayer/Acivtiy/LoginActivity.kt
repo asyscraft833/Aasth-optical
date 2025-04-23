@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import com.intuit.sdp.BuildConfig
 import com.teen.videoplayer.BaseActivity
 import com.teen.videoplayer.MainActivity
@@ -21,6 +22,9 @@ import com.teen.videoplayer.Utils.NetworkUtils
 import com.teen.videoplayer.ViewModels.LoginViewmodel
 import com.teen.videoplayer.databinding.ActivityLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class LoginActivity : BaseActivity() {
@@ -30,13 +34,14 @@ class LoginActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
 
         binding.loginbtn.setOnClickListener {
+
             if (validateInput()) {
                 loginApi()
             }
+
         }
 
         observeViewModel()
@@ -51,11 +56,15 @@ class LoginActivity : BaseActivity() {
         }
     }
 
+
     override fun onStart() {
         super.onStart()
-        if (userPref.isLogin){
-            startActivity(Intent(this, MainActivity::class.java))
-            finish()
+
+        if (userPref.isLogin) {
+            lifecycleScope.launch {
+                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                finish()
+            }
         }
     }
 
@@ -90,25 +99,28 @@ class LoginActivity : BaseActivity() {
         binding.tvRegister.text = spannableString
     }
 
+
+
     private fun observeViewModel() {
         viewmodel.loginResponse.observe(this@LoginActivity) { response ->
-            if (BuildConfig.DEBUG) {
-                Log.d("LoginData", "Response login Api: ${response.message}")
-            }
-
             if (response.success) {
-                userPref.apply {
-                    isLogin = response.success
-                    setToken(response.access_token.toString())
-//                    setUserId(response.user.id.toString())
-//                    setMobileNumber(response.user.phone.toString())
-//                    setName(response.user.name.toString())
-                }
+                lifecycleScope.launch(Dispatchers.IO) {
+                    userPref.apply {
+                        isLogin = response.success
+                        setToken(response.access_token.toString())
+                        setUserId(response.total_user.toString())
+                        setMobileNumber(response.mobile.toString())
+                        // setName(response.user.name.toString())
+                    }
 
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
+                    withContext(Dispatchers.Main) {
+                        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                        finish()
+                    }
+                }
             }
         }
+
 
         viewmodel.errorlogin.observe(this@LoginActivity) { error ->
             Log.e("Error", "Error: ${error.message}")
@@ -121,11 +133,13 @@ class LoginActivity : BaseActivity() {
 
     private fun loginApi() {
         if (NetworkUtils.isInternetAvailable(this)) {
+
             viewmodel.hitLogin(
                 binding.etmobile.text.toString(),
                 binding.etpassword.text.toString(),
                 binding.etmpin.text.toString()
             )
+
         } else {
             toast(this, "Please check your Internet Connection")
         }

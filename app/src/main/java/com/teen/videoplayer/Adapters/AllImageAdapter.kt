@@ -2,10 +2,8 @@ package com.teen.videoplayer.Adapters
 
 import android.app.Dialog
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -16,28 +14,27 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
-import com.teen.videoplayer.Model.UserDetails
-import com.teen.videoplayer.Model.UserImageResponse
 import com.teen.videoplayer.Model.data
+import com.teen.videoplayer.Model.dataAll
 import com.teen.videoplayer.R
 import com.teen.videoplayer.Utils.ImageViewerUtils
-import com.teen.videoplayer.databinding.DashbardRowLayoutBinding
 import com.teen.videoplayer.databinding.ImageRowItemBinding
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class ImageAdapter(
+class AllImageAdapter(
     private val context: Context,
-    private var items: MutableList<data>,
+    private var items: MutableList<dataAll>,
     private val onItemClick: (String,Int) -> Unit
 
-) : RecyclerView.Adapter<ImageAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<AllImageAdapter.ViewHolder>() {
 
     // ViewHolder with ViewBinding
     class ViewHolder(val binding: ImageRowItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ImageRowItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ImageRowItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
@@ -54,16 +51,24 @@ class ImageAdapter(
 
         holder.binding.apply {
 
+            val imageList = items.map {
+                data(
+                    file = it.image,
+                    date = it.date,
+                    imageid = it.imageid
+                )
+            }
+
             imageview.isClickable = true
             imageview.setOnClickListener {
-                ImageViewerUtils.fullImageview(context, items,startPosition = position)
-
+                ImageViewerUtils.fullImageview(context, imageList,startPosition = position)
             }
+
 
 
             Glide
                 .with(context)
-                .load(item.file)
+                .load(item.image)
                 .centerCrop()
                 .placeholder(R.drawable.placeholder_image)
                 .into(imageview)
@@ -72,10 +77,12 @@ class ImageAdapter(
         }
     }
 
-    fun updateList(newlist : MutableList<data>){
+
+    fun updateList(newlist: MutableList<dataAll>) {
         items = newlist
         notifyDataSetChanged()
     }
+
 
 
 }

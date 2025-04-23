@@ -43,6 +43,7 @@
                     android:layout_marginTop="@dimen/_20sdp"
                     app:prefixText="+91"
                     android:textColorHint="@color/hintcolor"
+                    app:boxBackgroundColor="@color/cardaddbg"
                     android:layout_height="wrap_content">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -64,6 +65,7 @@
                     android:hint="Enter your password"
                     app:endIconMode="password_toggle"
                     app:boxStrokeColor="@color/greycolor"
+                    app:boxBackgroundColor="@color/cardaddbg"
                     android:textColorHint="@color/hintcolor"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:layout_height="wrap_content">
@@ -85,8 +87,10 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:hint="Enter your mpin"
+                    app:boxBackgroundColor="@color/cardaddbg"
                     app:boxStrokeColor="@color/greycolor"
                     android:textColorHint="@color/hintcolor"
+                    app:endIconMode="password_toggle"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:layout_height="wrap_content">
 
@@ -97,6 +101,7 @@
                         android:id="@+id/etmpin"
                         android:inputType="textPassword"
                         android:textColor="@color/textcolor"
+                        android:drawableStart="@drawable/password_24px"
                         android:drawablePadding="@dimen/_5sdp"
                         android:textSize="16sp"
                         />
@@ -110,6 +115,7 @@
                     android:layout_height="wrap_content"
                     android:text="Forgot Password ?"
                     android:textStyle="bold"
+                    android:visibility="gone"
                     android:layout_marginTop="@dimen/_5sdp"
                     android:textSize="@dimen/_12ssp"
                     android:padding="@dimen/_5sdp"
@@ -123,7 +129,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minWidth="@dimen/_140sdp"
-                android:textColor="@color/white"
+                android:textColor="@color/btncolor"
                 android:text="Login"
                 android:paddingVertical="@dimen/_10sdp"
                 android:layout_marginTop="@dimen/_30sdp"
@@ -140,6 +146,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Don’t have an account? Register"
+                android:visibility="gone"
                 android:gravity="center"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:layout_marginBottom="@dimen/_30sdp"
