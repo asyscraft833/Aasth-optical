@@ -177,21 +177,23 @@ class MainActivity : BaseActivity() {
     }
 
 
-//    override fun onResume() {
-//        super.onResume()
-//        UserdetailAPi()
-//    }
+    override fun onResume() {
+        super.onResume()
+        UserdetailAPi()
+    }
 
     private fun SetupRecylerview() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = dashboardAdapter(this, emptyList(), onItemClick = { position, flag ->
 
+            // 1 edit for item
             if (flag == 1) {
                 val intent = Intent(this, AddUserActivity::class.java)
                 intent.putExtra("userDetails", datalist[position])
                 intent.putExtra("flag", flag)
                 startActivity(intent)
 
+                // 3 view info
             } else if (flag == 3) {
                 val intent = Intent(this, AddUserActivity::class.java)
                 intent.putExtra("userDetails", datalist[position])
@@ -202,18 +204,24 @@ class MainActivity : BaseActivity() {
 
                 showUserDeleteAlertBox(this) { confirmed ->
                     if (confirmed) {
-                        datalist.removeAt(position)
+                        val actualPosition = position
+                        val userId = datalist[actualPosition].id.toString()
+
+                        datalist.removeAt(actualPosition)
                         adapter.notifyDataSetChanged()
-                        DeletuserEntry(datalist[position].id.toString())
+                        DeletuserEntry(userId)
+
+                        binding.totalitem.text = datalist.count().toString()
                     }
                 }
 
 
+
             } else {
-                val dialIntent = Intent(Intent.ACTION_DIAL).apply {
-                    data = Uri.parse("tel:$flag")
-                }
-                startActivity(dialIntent)
+//                val dialIntent = Intent(Intent.ACTION_DIAL).apply {
+//                    data = Uri.parse("tel:$flag")
+//                }
+//                startActivity(dialIntent)
 
             }
         })

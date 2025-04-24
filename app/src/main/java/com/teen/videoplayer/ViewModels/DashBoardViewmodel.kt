@@ -8,16 +8,10 @@ import com.teen.videoplayer.Model.DashBoardUserDetailsResponse
 import com.teen.videoplayer.Model.DashboardCountResponse
 import com.teen.videoplayer.Model.DeleteUserResponse
 import com.teen.videoplayer.Model.GetAllIMagesResponse
-import com.teen.videoplayer.Model.LoginResponse
 import com.teen.videoplayer.Model.MonthlyReportResponse
-import com.teen.videoplayer.Model.RegisterResponse
 import com.teen.videoplayer.Utils.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import javax.inject.Inject
 
 
@@ -170,7 +164,7 @@ class DashBoardViewmodel @Inject constructor(
             try {
                 // Show progress
                 progresslogin.value = true
-                val response = repository.userDetailsFilter(token,query)
+                val response = repository.userDetailsFilter(token, query)
 
                 if (response.isSuccessful) {
                     dashBoardResponseFilter.postValue(response.body())
@@ -198,7 +192,7 @@ class DashBoardViewmodel @Inject constructor(
             try {
                 // Show progress
                 progresslogin.value = true
-                val response = repository.deleteUserDetails(token,userid)
+                val response = repository.deleteUserDetails(token, userid)
 
                 if (response.isSuccessful) {
 
@@ -225,7 +219,7 @@ class DashBoardViewmodel @Inject constructor(
             try {
                 // Show progress
                 progresslogin.value = true
-                val response = repository.deleteUserImages(token,Imageid)
+                val response = repository.deleteUserImages(token, Imageid)
 
                 if (response.isSuccessful) {
 
@@ -244,4 +238,4 @@ class DashBoardViewmodel @Inject constructor(
     }
 
 
-   }
+}

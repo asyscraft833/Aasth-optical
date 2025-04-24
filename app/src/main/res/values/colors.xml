@@ -5,6 +5,7 @@
     <color name="btncolor">#FFFFFFFF</color>
     <color name="dashboardcolor">#B8A0EA</color>
     <color name="primarycolor">#004AAD</color>
+    <color name="Cardbuttoncolor">#004AAD</color>
 
     <color name="cardaddbg">#F1FAFF</color>
     <color name="secondcolor">#FF8641</color>

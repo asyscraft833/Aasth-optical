@@ -38,6 +38,8 @@ import com.teen.videoplayer.R
 import com.teen.videoplayer.Utils.CameraUtils
 import com.teen.videoplayer.Utils.CameraUtils.openCamera
 import com.teen.videoplayer.Utils.CameraUtils.openGallery
+import com.teen.videoplayer.Utils.ImageViewerUtils.showUserDeleteAlertBox
+import com.teen.videoplayer.Utils.ImageViewerUtils.showUserDeleteAlertBoxImage
 import com.teen.videoplayer.Utils.NetworkUtils
 import com.teen.videoplayer.Utils.PermissionUtils
 import com.teen.videoplayer.ViewModels.AddUserViewmodel
@@ -81,17 +83,27 @@ class AddUserActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_add_user)
 
+
         flag = intent.getIntExtra("flag",0)
         val userDetails = intent.getParcelableExtra<UserDetails>("userDetails")
 
 
+
+
+        Log.d("flagdata",flag.toString())
+
+
         if (flag==1  || flag==3) {
 
+
             binding.registerbutton.text = "Update"
+
             if (userDetails != null) {
+
                 userid = userDetails.id.toString()
                 binding.etname.setText(userDetails.name)
                 binding.etmobile.setText(userDetails.phone)
+
                 if (userDetails.images.isNotEmpty()) binding.etDate.setText(userDetails.images[0].date)
 
                 Log.d("updatedata","Userid  : "+userid)
@@ -102,6 +114,7 @@ class AddUserActivity : BaseActivity() {
         }
 
         if (flag==3)  {
+
             binding.registerbutton.visibility = View.GONE
             binding.uploadimagelayout.visibility = View.GONE
             binding.uploadimagelayouttext.visibility = View.GONE
@@ -113,14 +126,24 @@ class AddUserActivity : BaseActivity() {
 
 
         } else if(flag==1){
+
             binding.titletext.text = "Update detail"
             binding.uploadimagelayout.visibility = View.VISIBLE
             binding.uploadimagelayouttext.visibility = View.VISIBLE
             binding.registerbutton.visibility = View.VISIBLE
+
         }
 
+
+
         binding.registerbutton.setOnClickListener {
-            if (flag==1) HitUserApiUpdate() else HitUserApi()
+            if (flag==1){
+                Log.d("flagdata","update "+flag.toString())
+                HitUserApiUpdate()
+            } else {
+                Log.d("flagdata","register run "+flag.toString())
+                HitUserApi()
+            }
         }
 
 
@@ -143,7 +166,7 @@ class AddUserActivity : BaseActivity() {
             binding.etmobile.setText(selectedCustomer?.phone ?: "")
 
             userid = selectedCustomer?.id.toString()
-            flag = 1
+            flag=1
 
         }
 
@@ -153,54 +176,14 @@ class AddUserActivity : BaseActivity() {
             val selectedCustomer = autoCompleteAdapternumber.getItem(position)
             binding.etname.setText(selectedCustomer?.name ?: "")
             binding.etmobile.setText(selectedCustomer?.phone ?: "")
-
             userid = selectedCustomer?.id.toString()
-            flag = 1
+            flag=1
 
         }
 
 
-
         binding.etDate.setOnClickListener { showDatePicker() }
         binding.backbtn.setOnClickListener { finish() }
-
-
-
-
-        binding.etname.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                flag = 0
-                activeField = "name"
-
-                val query = s.toString()
-                if (query.length >= 2) {
-                    UserdetailAPiFilter(query)
-                }
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
-
-        binding.etmobile.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                activeField = "mobile"
-
-                flag = 0
-
-                val query = s.toString()
-                if (query.length >= 2) {
-                    UserdetailAPiFilter(query)
-                }
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
-
 
 
         binding.opencamera.setOnClickListener {
@@ -220,9 +203,16 @@ class AddUserActivity : BaseActivity() {
 
 
 
-       adapter = ImageAdapter(this,imagedatalist, onItemClick = { imageId , position ->
+       adapter = ImageAdapter(this,imagedatalist,flag, onItemClick = { imageId , position ->
 
-           showDeleteConfirmationDialog(imageId.toString(),position)
+           showUserDeleteAlertBoxImage(this) { confirmed ->
+               if (confirmed) {
+                   imagedatalist.removeAt(position)
+                   adapter.notifyDataSetChanged()
+                   DeleteUserImage(imageId.toString())
+               }
+           }
+
 
         })
 
@@ -232,29 +222,49 @@ class AddUserActivity : BaseActivity() {
         observeViewModel()
         observer()
         RecieveCamera()
+        if (flag!=1){
+            handledropdown()
+        }
     }
 
-    private fun showDeleteConfirmationDialog(id : String, position : Int) {
-        AlertDialog.Builder(this,R.style.CustomAlertDialog)
-            .setTitle("Delete Image")
-            .setMessage("Are you sure you want to delete this image?")
-            .setPositiveButton("OK") { dialog, _ ->
+    private fun handledropdown(){
 
-                imagedatalist.removeAt(position)
-                adapter.notifyDataSetChanged()
+        binding.etname.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
 
-                DeleteUserImage(id)
-                dialog.dismiss()
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                activeField = "name"
 
+                flag=0
+                val query = s.toString()
+                if (query.length >= 2) {
+                    UserdetailAPiFilter(query)
+                }
             }
-            .setNegativeButton("Cancel") { dialog, _ ->
-                dialog.dismiss()
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        binding.etmobile.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                activeField = "mobile"
+
+                flag=0
+
+                val query = s.toString()
+                if (query.length >= 2) {
+                    UserdetailAPiFilter(query)
+                }
             }
-            .create()
-            .show()
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+
     }
-
 
 
 
@@ -302,6 +312,8 @@ class AddUserActivity : BaseActivity() {
         }
 
     }
+
+
 
     private fun RecieveCamera() {
         // Camera result launcher
@@ -419,9 +431,9 @@ class AddUserActivity : BaseActivity() {
     private fun showDatePicker() {
         val calendar = Calendar.getInstance()
         val datePickerDialog = DatePickerDialog(
-            this,
+            this,R.style.CustomDatePickerDialog,
             { _, year, month, day ->
-                val date = String.format("%02d-%02d-%04d", day, month + 1, year)
+                val date = String.format("%02d-%02d-%04d", day,month + 1,year)
                 binding.etDate.setText(date)
             },
 
@@ -447,12 +459,20 @@ class AddUserActivity : BaseActivity() {
                 token,
                 binding.etname.text.toString(),
                 binding.etmobile.text.toString(),
-                binding.etDate.text.toString(),
+                convertDateFormat(binding.etDate.text.toString()),
                 file
             )
         }
     }
 
+
+    fun convertDateFormat(dateStr: String): String {
+        val inputFormat = SimpleDateFormat("dd-MM-yy", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+        val date = inputFormat.parse(dateStr)
+        return outputFormat.format(date!!)
+    }
 
 
 
@@ -463,6 +483,8 @@ class AddUserActivity : BaseActivity() {
         }
 
         if (Validation()) {
+
+
             val token = "Bearer ${userPref.getToken()}"
 
                 // 1. User ne naya image select kiya
@@ -472,7 +494,6 @@ class AddUserActivity : BaseActivity() {
                 null // ya koi default File ya empty string based on use case
             }
 
-//            val fileToUpload = imageFile?.let { it } ?: ""
 
             Log.d("updatedata", "Token : $token")
             Log.d("updatedata", "Userid  : $userid")
@@ -488,7 +509,7 @@ class AddUserActivity : BaseActivity() {
                 userid,
                 binding.etname.text.toString(),
                 binding.etmobile.text.toString(),
-                binding.etDate.text.toString(),
+                convertDateFormat(binding.etDate.text.toString()),
                 fileToUpload
             )
         }
@@ -503,6 +524,7 @@ class AddUserActivity : BaseActivity() {
 
 
         val token = "Bearer ${userPref.getToken()}"
+
         viewmodel.hitUserImage(
             token,
             userid
@@ -518,6 +540,8 @@ class AddUserActivity : BaseActivity() {
         }
         return compressedFile
     }
+
+
 
     private fun Validation(): Boolean {
         return when {

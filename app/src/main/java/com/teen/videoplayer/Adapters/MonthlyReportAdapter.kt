@@ -23,7 +23,7 @@ import com.teen.videoplayer.databinding.DashbardRowLayoutBinding
 
 class MonthlyReportAdapter(
     private val context: Context,
-    private var items: List<UserDetails>,
+    var items: List<UserDetails>,
     private val onItemClick: (Int,Int) -> Unit
 
 ) : RecyclerView.Adapter<MonthlyReportAdapter.ViewHolder>() {
@@ -98,6 +98,8 @@ class MonthlyReportAdapter(
 
         }
     }
+
+    fun getItem(position: Int): UserDetails = items[position]
 
     fun updateList(newlist : List<UserDetails>){
         items = newlist

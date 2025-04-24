@@ -79,16 +79,16 @@
 
             <ImageView
                 android:id="@+id/edit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_marginEnd="@dimen/_5sdp"
                 android:src="@drawable/edit_24px"
-                app:tint="@color/primarycolor" />
+                app:tint="@color/Cardbuttoncolor" />
 
             <ImageView
                 android:id="@+id/delete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:src="@drawable/delete_24px"
                 app:tint="@color/red" />
         </LinearLayout>

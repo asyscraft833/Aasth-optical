@@ -3,6 +3,7 @@
     <!-- Adjusted for Night Mode -->
     <color name="black">#FFFFFFFF</color>
     <color name="btncolor">#FFFFFFFF</color>
+    <color name="Cardbuttoncolor">#FFFFFFFF</color>
     <color name="white">#11182780</color> <!-- Dark background -->
     <color name="dashboardcolor">#9B84C8</color> <!-- Lighter purple shade for night mode -->
     <color name="primarycolor">#1E3A8A</color> <!-- Darker blue for night mode -->

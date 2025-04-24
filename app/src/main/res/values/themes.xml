@@ -9,13 +9,13 @@
 
     <!-- Custom Button Style -->
     <style name="CustomDialogButton" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
-        <item name="android:textColor">@color/primarycolor</item>
+        <item name="android:textColor">@color/Cardbuttoncolor</item>
         <item name="android:background">?attr/selectableItemBackground</item>
     </style>
 
 
     <style name="CustomAlertDialog" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
-        <item name="colorPrimary">@color/primarycolor</item>
+        <item name="colorPrimary">@color/Cardbuttoncolor</item>
         <item name="android:textColorPrimary">@color/black</item>
         <item name="android:background">@color/white</item>
     </style>

@@ -18,6 +18,7 @@ import com.teen.videoplayer.Model.data
 import com.teen.videoplayer.Model.dataAll
 import com.teen.videoplayer.R
 import com.teen.videoplayer.Utils.ImageViewerUtils.showUserDeleteAlertBox
+import com.teen.videoplayer.Utils.ImageViewerUtils.showUserDeleteAlertBoxImage
 import com.teen.videoplayer.Utils.NetworkUtils
 import com.teen.videoplayer.ViewModels.DashBoardViewmodel
 import com.teen.videoplayer.databinding.ActivityGalleryBinding
@@ -56,7 +57,7 @@ class GalleryActivity : BaseActivity() {
 
         adapter = AllImageAdapter(this,dataList, onItemClick = { imageId,position ->
 
-            showUserDeleteAlertBox(this) { confirmed ->
+            showUserDeleteAlertBoxImage(this) { confirmed ->
                 if (confirmed) {
                     dataList.removeAt(position)
                     adapter.notifyDataSetChanged()
@@ -87,13 +88,14 @@ class GalleryActivity : BaseActivity() {
         viewmodel.GetAllIMagesResponseList.observe(this) { response ->
             dataList.clear()
             dataList.addAll(response.data)
-            binding.totalitem.text = response.data.size.toString()
+            binding.totalitem.text = dataList.size.toString()
             adapter.updateList(dataList)
         }
 
 
         viewmodel.deleteUserResponse.observe(this) {
             toast(this,it.message.toString())
+            binding.totalitem.text = dataList.size.toString()
 //            UserAllImage()
 
         }

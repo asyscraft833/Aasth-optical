@@ -79,61 +79,46 @@ class MonthlyReportActivity : BaseActivity() {
     private fun SetupRecylerview() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = MonthlyReportAdapter(this, emptyList(), onItemClick = { position, flag ->
+            val user = adapter.getItem(position)
 
-            if (flag == 1) {
+            when (flag) {
+                1 -> {
+                    val intent = Intent(this, AddUserActivity::class.java)
+                    intent.putExtra("userDetails", user)
+                    intent.putExtra("flag", flag)
+                    startActivity(intent)
+                }
+                2 -> {
+                    showUserDeleteAlertBox(this) { confirmed ->
+                        if (confirmed) {
+                            val userId = user.id.toString()
+                            val newList = adapter.items.toMutableList().apply { removeAt(position) }
 
-
-                val intent = Intent(this, AddUserActivity::class.java)
-                intent.putExtra("userDetails", datalist[position])
-                intent.putExtra("flag", flag)
-                startActivity(intent)
-
-            } else if (flag == 2) {
-
-
-                showUserDeleteAlertBox(this) { confirmed ->
-                    if (confirmed) {
-                        datalist.removeAt(position)
-                        adapter.notifyDataSetChanged()
-                        DeletuserEntry(datalist[position].id.toString())
+                            adapter.updateList(newList)
+                            DeletuserEntry(userId)
+                            binding.totalitem.text = newList.size.toString()
+                        }
                     }
                 }
-
-            } else if (flag == 3) {
-
-                val intent = Intent(this, AddUserActivity::class.java)
-                intent.putExtra("flag", flag)
-                intent.putExtra("userDetails", datalist[position])
-                startActivity(intent)
-
-            } else {
-
-                val dialIntent = Intent(Intent.ACTION_DIAL).apply {
-                    data = Uri.parse("tel:$flag")
+                3 -> {
+                    val intent = Intent(this, AddUserActivity::class.java)
+                    intent.putExtra("flag", flag)
+                    intent.putExtra("userDetails", user)
+                    startActivity(intent)
                 }
-                startActivity(dialIntent)
-
+                else -> {
+//                    val dialIntent = Intent(Intent.ACTION_DIAL).apply {
+//                        data = Uri.parse("tel:$flag")
+//                    }
+//                    startActivity(dialIntent)
+                }
             }
         })
+
 
         binding.recyclerView.adapter = adapter
     }
 
-    fun dialogfun(userId: String) {
-        AlertDialog.Builder(this)
-            .setTitle("Delete")
-            .setMessage("Do you want to delete this User?")
-            .setPositiveButton("Yes") { dialog, _ ->
-                DeletuserEntry(userId)
-                Toast.makeText(this, "user deleted Successfuly", Toast.LENGTH_SHORT).show()
-                dialog.dismiss()
-            }
-            .setNegativeButton("No") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
-
-    }
 
     fun DeletuserEntry(userid: String) {
         if (NetworkUtils.isInternetAvailable(this)) {
@@ -182,7 +167,7 @@ class MonthlyReportActivity : BaseActivity() {
         }
 
         viewmodel.deleteUserResponse.observe(this) { response ->
-            UserdetailAPi()
+            toast(this,response.message.toString())
         }
 
         viewmodel.progresslogin.observe(this) {

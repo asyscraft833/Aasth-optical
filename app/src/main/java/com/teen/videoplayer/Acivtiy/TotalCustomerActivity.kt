@@ -72,33 +72,41 @@ class TotalCustomerActivity : BaseActivity() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = dashboardAdapter(this, emptyList(), onItemClick = { position, flag ->
 
-            if (flag == 1) {
-                val intent = Intent(this, AddUserActivity::class.java)
-                intent.putExtra("userDetails", datalist[position])
-                intent.putExtra("flag", flag)
-                startActivity(intent)
-            } else if (flag == 3) {
-                val intent = Intent(this, AddUserActivity::class.java)
-                intent.putExtra("userDetails", datalist[position])
-                intent.putExtra("flag", flag)
-                startActivity(intent)
-            } else if (flag == 2) {
+            val user = adapter.getItem(position)
 
-                showUserDeleteAlertBox(this) { confirmed ->
-                    if (confirmed) {
-                        datalist.removeAt(position)
-                        adapter.notifyDataSetChanged()
-                        DeletuserEntry(datalist[position].id.toString())
+            when (flag) {
+                1 -> {
+                    val intent = Intent(this, AddUserActivity::class.java)
+                    intent.putExtra("userDetails", user)
+                    intent.putExtra("flag", flag)
+                    startActivity(intent)
+                }
+                2 -> {
+                    showUserDeleteAlertBox(this) { confirmed ->
+                        if (confirmed) {
+                            val userId = user.id.toString()
+                            val newList = adapter.items.toMutableList().apply { removeAt(position) }
+
+                            adapter.updateList(newList)
+                            DeletuserEntry(userId)
+                            binding.totalitem.text = newList.size.toString()
+                        }
                     }
                 }
-
-            } else {
-                val dialIntent = Intent(Intent.ACTION_DIAL).apply {
-                    data = Uri.parse("tel:$flag")
+                3 -> {
+                    val intent = Intent(this, AddUserActivity::class.java)
+                    intent.putExtra("flag", flag)
+                    intent.putExtra("userDetails", user)
+                    startActivity(intent)
                 }
-                startActivity(dialIntent)
-
+                else -> {
+//                    val dialIntent = Intent(Intent.ACTION_DIAL).apply {
+//                        data = Uri.parse("tel:$flag")
+//                    }
+//                    startActivity(dialIntent)
+                }
             }
+
         })
         binding.recyclerView.adapter = adapter
     }

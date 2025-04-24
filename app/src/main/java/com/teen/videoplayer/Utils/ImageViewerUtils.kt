@@ -102,6 +102,21 @@ object ImageViewerUtils {
             .show()
     }
 
+    fun showUserDeleteAlertBoxImage(context: Context, onResult: (Boolean) -> Unit) {
+        AlertDialog.Builder(context, R.style.CustomAlertDialog)
+            .setTitle("Delete")
+            .setMessage("Are you sure you want to delete this image?")
+            .setPositiveButton("Yes") { dialog, _ ->
+                dialog.dismiss()
+                onResult(true)
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+                onResult(false) // User canceled
+            }
+            .show()
+    }
+
 
 
     private fun convertDateFormat(inputDate: String): String {

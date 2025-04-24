@@ -13,6 +13,15 @@
         android:layout_height="match_parent"
         android:scaleType="fitXY"
         android:src="@drawable/image" />
+    <ImageView
+        android:id="@+id/deleteimage"
+        android:layout_width="30dp"
+        android:layout_gravity="right"
+        android:visibility="gone"
+        android:layout_height="30dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/delete_24px"
+        app:tint="@color/red" />
 
 
 </androidx.cardview.widget.CardView>

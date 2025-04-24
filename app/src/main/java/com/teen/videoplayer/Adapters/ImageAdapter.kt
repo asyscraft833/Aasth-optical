@@ -9,6 +9,7 @@ import android.net.Uri
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -29,6 +30,7 @@ import java.util.Locale
 class ImageAdapter(
     private val context: Context,
     private var items: MutableList<data>,
+    private val flag : Int,
     private val onItemClick: (String,Int) -> Unit
 
 ) : RecyclerView.Adapter<ImageAdapter.ViewHolder>() {
@@ -46,9 +48,15 @@ class ImageAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
 
-        holder.binding.imageview.setOnLongClickListener {
+//        holder.binding.imageview.setOnLongClickListener {
+//            onItemClick(item.imageid.toString(),position)
+//            true
+//        }
+
+        if (flag==1) holder.binding.deleteimage.visibility = View.VISIBLE
+
+        holder.binding.deleteimage.setOnClickListener {
             onItemClick(item.imageid.toString(),position)
-            true
         }
 
 

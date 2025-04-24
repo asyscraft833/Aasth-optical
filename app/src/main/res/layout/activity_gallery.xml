@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="right"
                 android:padding="8dp"
-                android:text="330"
+                android:text="0"
                 android:textColor="@color/hintcolor"
                 android:textSize="18sp"
                 android:textStyle="bold" />
